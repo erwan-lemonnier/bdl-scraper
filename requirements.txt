@@ -1,0 +1,13 @@
+pymacaron
+pymacaron-async
+pymacaron-dynamodb
+facebook-sdk
+MechanicalSoup
+beautifulsoup4
+lxml
+requests
+unidecode
+html2text
+keen
+forex-python
+selenium
