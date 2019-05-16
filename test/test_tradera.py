@@ -50,9 +50,9 @@ class Tests(TestCase):
             'https://www.tradera.com/item/341181/351090548/oljehus-till-taklampa-i-porslin-med-brannare',
             {
                 "description": "Oljehuset är begagnat men i gott skick\nPorslinets totalhöjd ca 17 cm diameter i överkant ca 13 cm",
-                "epoch_published": 1558018800,
+                "epoch_published": 1558013520,
                 "title": "Oljehus till taklampa i porslin med br\u00e4nnare",
-                "native_picture_url": "https://www.tradera.com/img.tradera.net/images/765/309572765_7153c62d-f6c2-443d-b4b3-97d6dd8e0eb8.jpg",
+                "native_picture_url": "https://img.tradera.net/images/765/309572765_7153c62d-f6c2-443d-b4b3-97d6dd8e0eb8.jpg",
                 "currency": "SEK",
                 "price": 99,
                 "price_is_fixed": False,

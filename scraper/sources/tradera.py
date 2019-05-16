@@ -105,6 +105,8 @@ class TraderaCrawler(GenericCrawler):
         def string_to_price(s):
             assert 'kr' in s
             s = s.replace('kr', '').strip()
+            s = self.html_to_text(s)
+            s = s.replace(' ', '')
             return int(s)
 
         # Find price
@@ -171,12 +173,15 @@ class TraderaCrawler(GenericCrawler):
         tag = card.find(class_='item-card-figure')
         log.info("Found card_figure: %s" % tag)
         native_url = tag.a['href']
-        if not tag.img:
-            raise SkipThisItem("Card has no picture")
-        native_picture_url = tag.img['src']
-
         assert native_url
-        assert native_picture_url.startswith('//')
+        native_url = BASE_URL + '/' + native_url.lstrip('/')
+        if not tag.img:
+            native_picture_url = None
+            # raise SkipThisItem("Card has no picture")
+        else:
+            native_picture_url = tag.img['src']
+            assert native_picture_url.startswith('//')
+            native_picture_url = 'https:' + native_picture_url,
 
         tag = card.find(class_='item-card-details-price-before-discount')
         price = tag.text
@@ -189,8 +194,8 @@ class TraderaCrawler(GenericCrawler):
         # Let's prepare an ItemForSale representing this object
         item = ApiPool.scraper.model.TraderaListingItem(
             title=title,
-            native_url=BASE_URL + '/' + native_url.lstrip('/'),
-            native_picture_url='https:' + native_picture_url,
+            native_url=native_url,
+            native_picture_url=native_picture_url,
             price=price,
             currency='SEK',
         )

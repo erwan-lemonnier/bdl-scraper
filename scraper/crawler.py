@@ -112,9 +112,7 @@ class GenericCrawler():
     def html_to_text(self, html):
         """Take some html text and return a text string, cleaned up of all html and normalized"""
         s = html2text(html)
-        log.debug("After sub: %s" % s)
         s = htmlparser.unescape(s)
-        log.debug("After sub: %s" % s)
         s = s.replace('\.', '.')
         s = s.replace('\*', '*')
         s = re.sub(re.compile('^[\s]+', re.MULTILINE), '', s)
