@@ -1,6 +1,5 @@
 import logging
 import re
-import json
 import subprocess
 from time import sleep
 from html.parser import HTMLParser
@@ -8,10 +7,7 @@ from html2text import html2text
 import requests.exceptions
 import requests
 from bs4 import BeautifulSoup
-# import mechanicalsoup
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from pymacaron.utils import is_ec2_instance
 from pymacaron.config import get_config
 
 
@@ -21,7 +17,8 @@ log = logging.getLogger(__name__)
 htmlparser = HTMLParser()
 
 
-is_dev = not is_ec2_instance()
+# TODO: implement proper check to know if chrome/webdriver is available
+has_webdriver = False
 
 
 class GenericCrawler():
@@ -31,11 +28,8 @@ class GenericCrawler():
         assert source, "source must be set"
         assert consumer, "consumer must be set"
         self.retry_delay = 3
-        # self.browser = mechanicalsoup.Browser(
-        #     soup_config={'features': 'lxml'}
-        # )
-        global is_dev
-        if not is_dev:
+        global has_webdriver
+        if has_webdriver:
             self.driver = webdriver.Chrome()
             self.driver.implicitly_wait(30)
         # The soup
@@ -57,8 +51,9 @@ class GenericCrawler():
             retry = retry - 1
             sleep(0.5)
 
-            if is_dev:
-                log.debug("Fetching with browserless: %s" % url)
+            if not has_webdriver:
+                # Use browserless.io to fetch rendered pages
+
                 # Huh? requests does not work against browserless??
                 # r = requests.post(
                 #     'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key,
@@ -66,9 +61,10 @@ class GenericCrawler():
                 #         'url': 'https://example.com/',
                 #     },
                 # )
+
                 u = 'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key
                 data = '{"url": "%s"}' % url
-                b = subprocess.check_output(['curl', '-X', 'POST', u, '-H', 'Cache-Control: no-cache', '-H', 'Content-Type: application/json', '-d', data])
+                b = subprocess.check_output(['curl', '-s', '-X', 'POST', u, '-H', 'Cache-Control: no-cache', '-H', 'Content-Type: application/json', '-d', data])
                 s = b.decode('utf-8')
 
                 log.debug("Browserless replies: %s" % s[0:100])
@@ -78,8 +74,7 @@ class GenericCrawler():
             else:
                 try:
                     log.info("Trying to fetch url %s" % url)
-                    # TODO: Use selenium
-                    # self.soup = self.browser.get(url).soup
+                    # TODO: Use webdriver/selenium to fetch url
                     self.driver.get_url()
                     self.soup = BeautifulSoup(self.driver.page_source, 'lxml')
                     return True
@@ -89,7 +84,7 @@ class GenericCrawler():
                         sleep(self.retry_delay)
                     else:
                         raise e
-        return None
+        return False
 
 
     def get_soup(self):
