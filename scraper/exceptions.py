@@ -30,6 +30,9 @@ error_definitions = [
     ('PARSER_ERROR', 500, 'ParserError', lambda s: s),
     ('NO_PRICE_ERROR', 500, 'NoPriceError', lambda s: s),
     ('NO_IMAGE_ERROR', 500, 'NoImageError', lambda s: s),
+    ('CANNOT_GET_URL', 404, 'CannotGetUrlError', lambda s: s),
+    ('CONSUMER_LIMIT_REACHED', 404, 'ConsumerLimitReachedError', lambda s: s),
+    ('SKIP_ITEM_ERROR', 404, 'SkipThisItem', lambda s: s),
 ]
 
 

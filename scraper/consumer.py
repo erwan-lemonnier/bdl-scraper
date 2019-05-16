@@ -1,7 +1,8 @@
 import logging
 from pymacaron.utils import to_epoch, timenow
-from scraper.api.tradera import TraderaCrawler
-from scraper.api.blocket import BlocketCrawler
+from scraper.exceptions import ConsumerLimitReachedError
+from scraper.sources.tradera import TraderaCrawler
+from scraper.sources.blocket import BlocketCrawler
 
 
 log = logging.getLogger(__name__)
@@ -44,27 +45,26 @@ class ItemConsumer():
 
         """
 
+        # Do we keep processing?
+        if self.limit_count and self.count_items >= self.limit_count:
+            raise ConsumerLimitReachedError("The limit count of %s items have been fetched - Stopping now." % self.limit_count)
+
+        if self.limit_sec and to_epoch(timenow()) - self.time_start > self.limit_sec:
+            raise ConsumerLimitReachedError("The time limit of %s sec has passed - Stopping now." % self.limit_sec)
+
+        if self.epoch_oldest and object.epoch_oldest < self.epoch_oldest:
+            raise ConsumerLimitReachedError("Parsed an item whose epoch_oldest %s is older than the limit %s" % (object.epoch_oldest, self.epoch_oldest))
+
+        self.count_items = self.count_items + 1
+
         if self.source == 'tradera':
-            return self._proceed_tradera(object)
+            return self._process_tradera(object)
         elif self.source == 'blocket':
-            return self._proceed_blocket(object)
+            return self._process_blocket(object)
         else:
             raise Exception("Don't know how to process objects from source %s" % self.source)
 
-        # Do we keep processing?
-        self.count_items = self.count_items + 1
 
-        if self.limit_count and self.count_items >= self.limit_count:
-            log.info("The limit count of %s items have been fetched - Stopping now." % self.limit_count)
-            return False
-
-        if self.limit_sec and to_epoch(timenow()) - self.time_start > self.limit_sec:
-            log.info("The time limit of %s sec has passed - Stopping now." % self.limit_sec)
-            return False
-
-        # TODO: match object against epoch_oldest
-
-        return True
 
 
     def _process_tradera(self, object):

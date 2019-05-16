@@ -399,9 +399,9 @@ definitions:
     type: object
     description: Minimal data from a Tradera announce, obtained by scraping the main Tradera listing page.
     properties:
-      tradera_id:
-        type: string
-        description: Item ID on tradera
+      is_sold:
+        type: boolean
+        description: True if announce is sold, False if still for sale.
       title:
         type: string
         description: Item title.
@@ -415,6 +415,9 @@ definitions:
         type: number
         format: amount
         description: Price asked for this item.
+      price_is_fixed:
+        type: boolean
+        description: True if item has a fixed price, false if is an auction
       currency:
         type: string
         format: currency
