@@ -14,7 +14,7 @@ aws_hosts_min: 1
 aws_access_key_id: AWS_BDL_ACCESS_KEY_ID
 aws_secret_access_key: AWS_BDL_SECRET_ACCESS_KEY
 
-jwt_issuer: scraper.bazardelux.com
+jwt_issuer: api.bazardelux.com
 jwt_secret: BDL_JWT_SECRET
 jwt_audience: BDL_JWT_AUDIENCE
 

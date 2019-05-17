@@ -57,15 +57,22 @@ class TraderaCrawler(GenericCrawler):
                     # scrape the current listing page
                     for item in self.yield_listing_page_items():
 
-                        # The listing page does not show the publication time of the announce,
-                        # but we know that they are listed by most recent first, so we get scrape
-                        # the first item and set the publication epoch of all items on that page
-                        # to that of the first one.
+                        # The listing page does not show the publication time
+                        # of the announce, but we know that they are listed by
+                        # most recent first, so we get scrape the first item
+                        # and let the consumer check the epoch_published. If it
+                        # passes, all items in the page will pass as well, even
+                        # if their epoch_published is earlier than
+                        # epoch_oldest, but that's ok.
                         if not epoch_published:
-                            i = self.scrape(item.native_url)
-                            epoch_published = i.bdlitem.epoch_published
+                            log.info("Scraping and processing first item to get its epoch_published")
+                            item = self.scrape(item.native_url)
 
-                        self.consumer.process(item)
+                            epoch_published = item.bdlitem.epoch_published
+                            log.info("Using epoch_published=%s for all items on the scanned page" % epoch_published)
+
+                        else:
+                            self.consumer.process(item)
 
             except ConsumerEpochReachedError:
                 log.info("Consumer reached epoch boundary for category %s - Proceed with next category" % category)
@@ -190,10 +197,9 @@ class TraderaCrawler(GenericCrawler):
 
     def card_to_listing_item(self, card):
 
-        log.debug("Parsing [%s]" % str(card))
+        log.debug("Parsing item-card [%s]" % str(card))
 
         tag = card.find(class_='item-card-figure')
-        log.info("Found card_figure: %s" % tag)
         native_url = tag.a['href']
         assert native_url
         native_url = BASE_URL + '/' + native_url.lstrip('/')
@@ -210,7 +216,6 @@ class TraderaCrawler(GenericCrawler):
         assert price
 
         tag = card.find(class_='item-card-details-header')
-        log.debug("title tag: %s" % tag)
         title = tag['title']
 
         # Let's prepare an ItemForSale representing this object
@@ -247,16 +252,12 @@ class TraderaCrawler(GenericCrawler):
     def get_next_page_url(self):
         """Find the url of the next page and return it, or None if no more pages"""
 
-        log.info("SEARCHING FOR NEXT PAGE")
-
         # Next page urls look like:
         # <li class="search-pagination-next"><a data-page-index="2" href="/search?categoryId=20&amp;q=stol&amp;paging=MjpBdWN0aW9ufDM5fDc2OlNob3BJdGVtfDl8NDk.&amp;spage=2" rel="next" data-nav>Nästa &raquo;</a></li>
         #
         # And it's missing when the last page is reached
 
         elems = self.get_soup().find_all('a', class_='page-link', attrs={'rel': 'next'})
-
-        log.debug("Found elems: %s" % elems)
 
         if len(elems) == 0:
             log.info("This is the last page!")

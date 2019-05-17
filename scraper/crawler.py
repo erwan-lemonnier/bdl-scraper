@@ -56,6 +56,7 @@ class GenericCrawler():
             log.info(str(e))
         except ConsumerEpochReachedError as e:
             log.info(str(e))
+        self.consumer.flush()
 
 
     def get_url(self, url):

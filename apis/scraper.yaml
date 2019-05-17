@@ -69,7 +69,7 @@ produces:
   - application/json
 paths:
 
-  /v1/{source}/scan:
+  /v1/scraper/scan:
     post:
       summary: Scan a website's listing page for objects.
       description:
@@ -103,21 +103,12 @@ paths:
         Matching items are directly pushed to the BDL API for processing.
 
       parameters:
-        - in: path
-          name: source
-          description: Code name of the targeted website.
-          required: true
-          type: string
-          enum:
-            - FACEBOOK
-            - BLOCKET
-            - TRADERA
         - in: body
           name: body
           description: How to scan this source.
           required: true
           schema:
-            $ref: "#/definitions/ScanFilters"
+            $ref: "#/definitions/ScanSettings"
 
       tags:
         - Scraper
@@ -129,16 +120,16 @@ paths:
       x-decorate-request: pymacaron.auth.add_auth
       responses:
         '200':
-          description: Matching items
+          description: Matching items, or none
           schema:
-            $ref: '#/definitions/ScanInterval'
+            $ref: '#/definitions/ScrapedObjects'
         default:
           description: Error
           schema:
             $ref: '#/definitions/Error'
 
 
-  /v1/{source}/scrape:
+  /v1/scraper/scrape:
     post:
       summary: Scrape a specific page.
       description:
@@ -150,15 +141,6 @@ paths:
         possible and return the scraped data.
 
       parameters:
-        - in: path
-          name: source
-          description: Code name of the targeted website.
-          required: true
-          type: string
-          enum:
-            - FACEBOOK
-            - BLOCKET
-            - TRADERA
         - in: body
           name: body
           description: How to scan this source.
@@ -187,10 +169,17 @@ paths:
 
 definitions:
 
-  ScanFilters:
+  ScanSettings:
     type: object
     description: What source to scan and how.
     properties:
+      source:
+        type: string
+        description: Where are those scraped objects from?
+        enum:
+          - BLOCKET
+          - TRADERA
+          - TEST
       epoch_youngest:
         description: Start scanning at first announce earlier than that epoch (Default to now).
         type: number
@@ -203,27 +192,24 @@ definitions:
       limit_sec:
         description: Stop searching after that much time (Default 30 sec).
         type: number
-
-
-  ScanInterval:
-    type: object
-    description: What time interval will be scanned.
-    properties:
-      epoch_youngest:
-        description: Start scanning at first announce earlier than that epoch.
-        type: number
-      epoch_oldest:
-        description: End scanning at first announce earlier than that epoch.
-        type: number
+      async:
+        description: If true (default), scan asynchronously in the background and return no objects. If false, scan synchronously and return all scanned objects.
+        type: boolean
     required:
-      - epoch_youngest
-      - epoch_oldest
+      - source
 
 
   ScrapeSettings:
     type: object
     description: A page to scrape and how.
     properties:
+      source:
+        type: string
+        description: Where are those scraped objects from?
+        enum:
+          - BLOCKET
+          - TRADERA
+          - TEST
       native_url:
         type: string
         description: URL to the original web page to scrape.
@@ -232,18 +218,12 @@ definitions:
         description: (Optional) Extra data provided by the scraper, as a json string.
     required:
       - native_url
-
+      - source
 
   ScrapedObjects:
     type: object
     description: Data from one of more scraped pages, to be processed.
     properties:
-      index:
-        type: string
-        description: Which index to store those items in.
-        enum:
-          - BDL
-          - MODEL
       source:
         type: string
         description: Where are those scraped objects from?
@@ -259,6 +239,12 @@ definitions:
       real:
         type: boolean
         description: True if those objects are real (default), false if not (test data).
+      epoch_youngest:
+        description: Start scanning at first announce earlier than that epoch.
+        type: number
+      epoch_oldest:
+        description: End scanning at first announce earlier than that epoch.
+        type: number
       objects:
         type: array
         description: A list of scrapped objects.
