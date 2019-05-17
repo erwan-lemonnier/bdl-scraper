@@ -43,7 +43,7 @@ class GenericCrawler():
         raise Exception("Not implemented")
 
 
-    def parse(self):
+    def scrape(self, url, scraper_data=None):
         raise Exception("Not implemented")
 
 

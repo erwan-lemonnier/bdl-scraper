@@ -73,7 +73,7 @@ class TraderaCrawler(GenericCrawler):
                 log.info("Consumer limit reached for category %s - Proceed with next category" % category)
 
 
-    def scrape(self, native_url):
+    def scrape(self, native_url, scraper_data=None):
         """Parse an announce on Tradera"""
 
         if not self.get_url(native_url):
@@ -140,24 +140,27 @@ class TraderaCrawler(GenericCrawler):
         native_seller_name = tag.text
         assert native_seller_name, "Failed to find seller name in %s" % native_url
 
-        item = ApiPool.scraper.model.TraderaItem(
+        item = ApiPool.scraper.model.ScrapedObject(
+            is_complete=True,
             native_url=native_url,
-            native_picture_url='https:' + native_picture_url,
-            is_sold=None,
-            title=title,
-            description=description,
-            price=price,
-            price_is_fixed=price_is_fixed,
-            currency='SEK',
-            epoch_published=epoch_published,
-            native_doc_id=native_doc_id,
-            native_seller_is_shop=native_seller_is_shop,
-            native_seller_name=native_seller_name,
+            bdlitem=ApiPool.scraper.model.BDLItem(
+                title=title,
+                price=price,
+                price_is_fixed=price_is_fixed,
+                currency='SEK',
+                is_sold=False,
+                native_picture_url='https:' + native_picture_url,
+                description=description,
+                epoch_published=epoch_published,
+                native_doc_id=native_doc_id,
+                native_seller_is_shop=native_seller_is_shop,
+                native_seller_name=native_seller_name,
+            )
         )
 
         log.debug("Scraped Tradera announce: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))
 
-        return item
+        return self.consumer.process(item)
 
     #
     # Internal methods
@@ -213,12 +216,16 @@ class TraderaCrawler(GenericCrawler):
         title = tag['title']
 
         # Let's prepare an ItemForSale representing this object
-        item = ApiPool.scraper.model.TraderaListingItem(
-            title=title,
+        item = ApiPool.scraper.model.ScrapedObject(
+            is_complete=False,
             native_url=native_url,
-            native_picture_url=native_picture_url,
-            price=price,
-            currency='SEK',
+            bdlitem=ApiPool.scraper.model.BDLItem(
+                is_sold=False,
+                title=title,
+                price=price,
+                currency='SEK',
+                native_picture_url=native_picture_url,
+            )
         )
 
         log.debug("Generated tradera listing item: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))

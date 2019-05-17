@@ -8,7 +8,7 @@ from scraper.sources.blocket import BlocketCrawler
 log = logging.getLogger(__name__)
 
 
-def get_crawler(source, **args):
+def get_crawler(source, epoch_youngest=None, epoch_oldest=None, limit_count=None, limit_sec=None):
     """Get a crawler for that source, properly initialized"""
 
     crawler_classes = {
@@ -36,9 +36,10 @@ class ItemConsumer():
         self.limit_sec = limit_sec
         self.time_start = to_epoch(timenow())
         self.count_items = 0
+        self.last_scraped_object = None
 
 
-    def process_and_go_on(self, object):
+    def process(self, object):
         """Swallow a scraped object and return True if the scraper should proceed
         scraping and sending the next object, or False if the scraper should
         stop.
@@ -57,19 +58,6 @@ class ItemConsumer():
 
         self.count_items = self.count_items + 1
 
-        if self.source == 'tradera':
-            return self._process_tradera(object)
-        elif self.source == 'blocket':
-            return self._process_blocket(object)
-        else:
-            raise Exception("Don't know how to process objects from source %s" % self.source)
+        # TODO: And push object to the BDL API
 
-
-
-
-    def _process_tradera(self, object):
-        pass
-
-
-    def _process_blocket(self, object):
-        pass
+        return object

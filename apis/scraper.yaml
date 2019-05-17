@@ -83,17 +83,24 @@ paths:
         having the most recent publication date (epoch_youngest), and the last
         announce being the oldest (epoch_oldest).
 
-        TODO - define boundary conditions.
-        Scanning starts at the most recent announce at 'epoch_youngest' or the
-        current epoch (), and stops
-        or at announces posted at
-        or before 'start_epoch', and proceeds until finding an announce that is
-        earlier than 'until_epoch', or after having parsed 'limit_count'
-        announces or having spent 'limit_sec' secunds scanning.
+        The boundaries of the scanned interval are defined via the the
+        following filters.
+
+        * epoch_youngest - The first item to match will have been published
+          before this epoch. Defaults to now.
+
+        * epoch_oldest - The last item to match will have been published
+          after this epoch. Defaults to now minus one day.
+
+        * limit_count=N - Will retrieve only the first N mathching items.
+
+        * limit_sec=X - Will stop scanning for items after X seconds have
+        elapsed.
 
         This endpoint returns the start and stop epochs of the time interval
-        that will be scanned. Use GET 'v1/results' to retrieve the scanned
-        objects as they come.
+        that will be scanned.
+
+        Matching items are directly pushed to the BDL API for processing.
 
       parameters:
         - in: path
@@ -110,13 +117,13 @@ paths:
           description: How to scan this source.
           required: true
           schema:
-            $ref: "#/definitions/ScanSettings"
+            $ref: "#/definitions/ScanFilters"
 
       tags:
         - Scraper
       produces:
         - application/json
-      x-bind-server: bdl.api.do_scan_source
+      x-bind-server: scraper.api.do_scan_source
       x-bind-client: scan_source
       x-decorate-server: pymacaron.auth.requires_auth
       x-decorate-request: pymacaron.auth.add_auth
@@ -163,7 +170,7 @@ paths:
         - Scraper
       produces:
         - application/json
-      x-bind-server: bdl.api.do_scrape_page
+      x-bind-server: scraper.api.do_scrape_source
       x-bind-client: scrape_page
       x-decorate-server: pymacaron.auth.requires_auth
       x-decorate-request: pymacaron.auth.add_auth
@@ -180,7 +187,7 @@ paths:
 
 definitions:
 
-  ScanSettings:
+  ScanFilters:
     type: object
     description: What source to scan and how.
     properties:
@@ -311,25 +318,6 @@ definitions:
         type: string
         format: currency
         description: The currency of all item prices.
-      picture_url:
-        type: string
-        description: The item's main picture with the highest possible resolution.
-      picture_url_w400:
-        type: string
-        description: The item's main picture resized to width 400px.
-      picture_url_w600:
-        type: string
-        description: The item's main picture resized to width 600px.
-      tags:
-        type: array
-        description: An array of string tags applied to that item
-        items:
-          type: string
-      picture_tags:
-        type: array
-        description: An array of string tags applied to that item''s picture
-        items:
-          type: string
       is_sold:
         type: boolean
         description: Whether this item is still for sale or not.
@@ -428,15 +416,22 @@ definitions:
       native_url:
         type: string
         description: URL to the original web page to scrape.
-      epoch_published:
+      native_doc_id:
         type: string
-        description: When it was published on Tradera (approximation).
+        description: (Optional) The document ID of the original announce in its marketplace (Facebook doc ID, blocket_id, tradera_id)
+      native_seller_name:
+        type: string
+        description: (Optional) The seller name.
+      native_seller_is_shop:
+        type: boolean
+        description: (Optional) True if the owner is a shop, false if is a private person.
 
 
 
   #
   # OK / ERROR
   #
+
 
   Ok:
     type: object
