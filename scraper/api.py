@@ -11,11 +11,12 @@ log = logging.getLogger(__name__)
 @asynctask
 def async_safe_scan(source, data):
     c = get_crawler(source, **ApiPool.scraper.model_to_json(data))
-    c.safe_scan()
+    c.scan_and_flush()
 
 
 def do_scan_source(source, data):
 
+    source = source.lower()
     now = to_epoch(timenow())
 
     if not data.epoch_youngest:
@@ -32,6 +33,7 @@ def do_scan_source(source, data):
 
 
 def do_scrape_source(source, data):
+    source = source.lower()
     c = get_crawler(source)
     return c.scrape(
         data.native_url,

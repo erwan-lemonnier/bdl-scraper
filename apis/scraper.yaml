@@ -329,6 +329,9 @@ definitions:
         type: string
         format: date-time
         description: (Optional) Date at which this item was marked as sold.
+      epoch_published:
+        type: string
+        description: (Optional) When this announce was published.
       native_doc_id:
         type: string
         description: (Optional) The document ID of the original announce in its marketplace (Facebook doc ID, blocket_id, tradera_id)
@@ -355,77 +358,6 @@ definitions:
         description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
     required:
       - is_sold
-
-
-  TraderaListingItem:
-    type: object
-    description: Minimal data from a Tradera announce, obtained by scraping the main Tradera listing page.
-    properties:
-      title:
-        type: string
-        description: Item title.
-      price:
-        type: number
-        format: amount
-        description: Price asked for this item.
-      currency:
-        type: string
-        format: currency
-        description: The currency of all item prices.
-      native_picture_url:
-        type: string
-        description: The item's main picture with the highest possible resolution.
-      native_url:
-        type: string
-        description: URL to the original web page to scrape.
-      epoch_published:
-        type: string
-        description: When it was published on Tradera (approximation).
-
-
-  TraderaItem:
-    type: object
-    description: Minimal data from a Tradera announce, obtained by scraping the main Tradera listing page.
-    properties:
-      is_sold:
-        type: boolean
-        description: True if announce is sold, False if still for sale.
-      title:
-        type: string
-        description: Item title.
-      description:
-        type: string
-        description: Item description.
-      epoch_published:
-        type: string
-        description: Epoch of item publication.
-      price:
-        type: number
-        format: amount
-        description: Price asked for this item.
-      price_is_fixed:
-        type: boolean
-        description: True if item has a fixed price, false if is an auction
-      currency:
-        type: string
-        format: currency
-        description: The currency of all item prices.
-      native_picture_url:
-        type: string
-        description: The item's main picture with the highest possible resolution.
-      native_url:
-        type: string
-        description: URL to the original web page to scrape.
-      native_doc_id:
-        type: string
-        description: (Optional) The document ID of the original announce in its marketplace (Facebook doc ID, blocket_id, tradera_id)
-      native_seller_name:
-        type: string
-        description: (Optional) The seller name.
-      native_seller_is_shop:
-        type: boolean
-        description: (Optional) True if the owner is a shop, false if is a private person.
-
 
 
   #

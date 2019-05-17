@@ -1,6 +1,7 @@
 import logging
 from pymacaron.utils import to_epoch, timenow
 from scraper.exceptions import ConsumerLimitReachedError
+from scraper.exceptions import ConsumerEpochReachedError
 from scraper.sources.tradera import TraderaCrawler
 from scraper.sources.blocket import BlocketCrawler
 
@@ -54,7 +55,7 @@ class ItemConsumer():
             raise ConsumerLimitReachedError("The time limit of %s sec has passed - Stopping now." % self.limit_sec)
 
         if self.epoch_oldest and object.epoch_oldest < self.epoch_oldest:
-            raise ConsumerLimitReachedError("Parsed an item whose epoch_oldest %s is older than the limit %s" % (object.epoch_oldest, self.epoch_oldest))
+            raise ConsumerEpochReachedError("Parsed an item whose epoch_oldest %s is older than the limit %s" % (object.epoch_oldest, self.epoch_oldest))
 
         self.count_items = self.count_items + 1
 

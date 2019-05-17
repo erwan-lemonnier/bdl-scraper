@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from pymacaron.config import get_config
 from scraper.exceptions import ConsumerLimitReachedError
+from scraper.exceptions import ConsumerEpochReachedError
 
 
 log = logging.getLogger(__name__)
@@ -47,12 +48,14 @@ class GenericCrawler():
         raise Exception("Not implemented")
 
 
-    def safe_scan(self):
+    def scan_and_flush(self):
         """Call self.scan() within try loops that catch consumer limit errors"""
         try:
             self.scan()
-        except ConsumerLimitReachedError:
-            log.info("Consumer limit reached")
+        except ConsumerLimitReachedError as e:
+            log.info(str(e))
+        except ConsumerEpochReachedError as e:
+            log.info(str(e))
 
 
     def get_url(self, url):

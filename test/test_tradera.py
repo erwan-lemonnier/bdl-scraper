@@ -5,6 +5,7 @@ from scraper.formats import get_custom_formats
 from unittest import TestCase
 from scraper.sources.tradera import TraderaCrawler
 from scraper.consumer import ItemConsumer
+from scraper.exceptions import ConsumerLimitReachedError
 
 
 log = logging.getLogger(__name__)
@@ -33,7 +34,13 @@ class Tests(TestCase):
             consumer=consumer,
         )
 
-        c.scan()
+        try:
+            c.scan()
+        except ConsumerLimitReachedError:
+            pass
+        else:
+            assert 0, "Should have caught a ConsumerLimitReachedError error"
+
         self.assertEqual(consumer.count_items, 10)
 
 

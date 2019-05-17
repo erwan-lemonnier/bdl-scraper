@@ -9,7 +9,7 @@ from scraper.crawler import GenericCrawler
 from scraper.exceptions import ParserError
 from scraper.exceptions import CannotGetUrlError
 from scraper.exceptions import SkipThisItem
-from scraper.exceptions import ConsumerLimitReachedError
+from scraper.exceptions import ConsumerEpochReachedError
 
 
 log = logging.getLogger(__name__)
@@ -63,14 +63,12 @@ class TraderaCrawler(GenericCrawler):
                         # to that of the first one.
                         if not epoch_published:
                             i = self.scrape(item.native_url)
-                            epoch_published = i.epoch_published
+                            epoch_published = i.bdlitem.epoch_published
 
-                        item.epoch_published = epoch_published
+                        self.consumer.process(item)
 
-                        self.consumer.process_and_go_on(item)
-
-            except ConsumerLimitReachedError:
-                log.info("Consumer limit reached for category %s - Proceed with next category" % category)
+            except ConsumerEpochReachedError:
+                log.info("Consumer reached epoch boundary for category %s - Proceed with next category" % category)
 
 
     def scrape(self, native_url, scraper_data=None):

@@ -32,6 +32,7 @@ error_definitions = [
     ('NO_IMAGE_ERROR', 500, 'NoImageError', lambda s: s),
     ('CANNOT_GET_URL', 404, 'CannotGetUrlError', lambda s: s),
     ('CONSUMER_LIMIT_REACHED', 404, 'ConsumerLimitReachedError', lambda s: s),
+    ('CONSUMER_EPOCH_REACHED', 404, 'ConsumerEpochReachedError', lambda s: s),
     ('SKIP_ITEM_ERROR', 404, 'SkipThisItem', lambda s: s),
 ]
 
