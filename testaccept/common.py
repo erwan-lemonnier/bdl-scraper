@@ -27,10 +27,17 @@ class ScraperTests(PyMacaronTestCase):
         self.assertEqual(j['is_complete'], True)
         self.assertTrue(j['native_url'].startswith('https://www.tradera.com/item/'))
         j = j['bdlitem']
+        self.assertTrue(j['native_picture_url'].startswith('https://img.tradera.net/images/'))
         self.assertTrue(j['epoch_published'] > 1558000000)
         self.assertTrue(type(j['native_doc_id']) is int)
         self.assertTrue(type(j['price']) is int)
         self.assertEqual(j['currency'], 'SEK')
+        self.assertTrue(j['title'])
+        self.assertTrue(j['description'])
+        self.assertEqual(j['is_sold'], False)
+        self.assertTrue(j['native_seller_is_shop'] in (True, False))
+        self.assertTrue(j['native_seller_name'])
+        self.assertTrue(j['price_is_fixed'] in (True, False))
 
 
     def assertIsIncompleteTraderaItem(self, j):
@@ -42,3 +49,4 @@ class ScraperTests(PyMacaronTestCase):
         if 'native_picture_url' not in keys:
             keys.append('native_picture_url')
         self.assertEqual(set(keys), set(['price', 'currency', 'is_sold', 'title', 'native_picture_url']))
+        self.assertEqual(j['is_sold'], False)
