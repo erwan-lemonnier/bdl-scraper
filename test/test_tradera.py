@@ -56,6 +56,9 @@ class Tests(TestCase):
                 "currency": "SEK",
                 "price": 99,
                 "price_is_fixed": False,
+                "native_doc_id": 351090548,
+                "native_seller_is_shop": False,
+                "native_seller_name": "etta10",
             }
         )
 
@@ -70,6 +73,9 @@ class Tests(TestCase):
                 "currency": "SEK",
                 "price": 409,
                 "price_is_fixed": False,
+                "native_doc_id": 350429852,
+                "native_seller_name": "StyleLoft",
+                "native_seller_is_shop": False,
             }
         )
 
@@ -85,5 +91,8 @@ class Tests(TestCase):
                 "currency": "SEK",
                 "price": 50,
                 "price_is_fixed": True,
+                "native_seller_is_shop": True,
+                "native_seller_name": "Sellpy",
+                "native_doc_id": 351064059,
             }
         )

@@ -82,6 +82,7 @@ class TraderaCrawler(GenericCrawler):
         main = self.get_soup().find(class_='view-item')
         assert main, "Failed to find view-item-main in %s" % native_url
 
+        # Title and picture
         tags = main.find_all('img', class_='image-gallery-item__image')
         assert len(tags) > 0, "Failed to find main image in %s" % native_url
         tag = tags[0]
@@ -91,10 +92,12 @@ class TraderaCrawler(GenericCrawler):
         native_picture_url = native_picture_url
         assert native_picture_url.startswith('//')
 
+        # Description
         tag = main.find(class_='view-item-description').find(class_='content-text')
         assert tag, "Failed to find description in %s" % native_url
         description = self.html_to_text(str(tag))
 
+        # Epoch of publication?
         tag = main.find(class_='view-item-footer-information-details-published')
         assert tag, "Failed to publication date in footer in %s" % native_url
         s = self.html_to_text(tag.text)
@@ -102,14 +105,11 @@ class TraderaCrawler(GenericCrawler):
         date = parser.parse(s + ' CET')
         epoch_published = to_epoch(date)
 
+        # Find price
         def string_to_price(s):
             assert 'kr' in s
-            s = s.replace('kr', '').strip()
-            s = self.html_to_text(s)
-            s = s.replace(' ', '')
-            return int(s)
+            return self.find_number(s)
 
-        # Find price
         price = None
         price_is_fixed = False
         tag = main.find(class_='view-item-fixed-price')
@@ -122,6 +122,24 @@ class TraderaCrawler(GenericCrawler):
             price = tag['data-amount-in-sek']
             price = string_to_price(price)
 
+        # Find object id
+        tag = main.find(class_='view-item-footer-information-details-itemid')
+        assert tag, "Failed to item_id footer in %s" % native_url
+        native_doc_id = self.find_number(str(tag))
+
+        # Seller is a shop?
+        native_seller_is_shop = False
+        tag = main.find(class_='view-item-details-list-seller-icon')
+        if tag and 'Butik' in str(tag):
+            native_seller_is_shop = True
+
+        # Seller name
+        tag = main.find(class_='view-item-details-list-seller-name')
+        assert tag, "Failed to find seller name class in %s" % native_url
+        tag = tag.span
+        native_seller_name = tag.text
+        assert native_seller_name, "Failed to find seller name in %s" % native_url
+
         item = ApiPool.scraper.model.TraderaItem(
             native_url=native_url,
             native_picture_url='https:' + native_picture_url,
@@ -132,6 +150,9 @@ class TraderaCrawler(GenericCrawler):
             price_is_fixed=price_is_fixed,
             currency='SEK',
             epoch_published=epoch_published,
+            native_doc_id=native_doc_id,
+            native_seller_is_shop=native_seller_is_shop,
+            native_seller_name=native_seller_name,
         )
 
         log.debug("Scraped Tradera announce: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))

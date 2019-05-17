@@ -23,7 +23,9 @@ live_host: scraper.bazardelux.com
 with_async: true
 
 slack_url: https://hooks.slack.com/services/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
-slack_api_channel: _scraper
+slack_channel: _scraper
+slack_errors_channel: _errors
+slack_warnings_channel: _warnings
 
 browserless_api_key: BROWSERLESS_API_KEY
 

@@ -118,3 +118,12 @@ class GenericCrawler():
         s = re.sub(re.compile('^[\s]+', re.MULTILINE), '', s)
         s = re.sub(re.compile('[\s]+$', re.MULTILINE), '', s)
         return s
+
+
+    def find_number(self, html):
+        s = self.html_to_text(html)
+        s = re.sub(re.compile('[\r\n]+', re.MULTILINE), '', s)
+        s = re.sub(r'^[^\d]*', '', s)
+        s = re.sub(r'[^\d]*$', '', s)
+        s = s.replace(' ', '')
+        return int(s)

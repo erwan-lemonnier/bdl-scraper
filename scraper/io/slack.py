@@ -73,7 +73,7 @@ def slack_error(title, body):
     if 'NON-FATAL' in title:
         channel = "#%s" % get_config().slack_warnings_channel
     else:
-        channel = "#%s" % get_config().slack_error_channel
+        channel = "#%s" % get_config().slack_errors_channel
 
     log.info("Slacking error to channel %s" % channel)
 
