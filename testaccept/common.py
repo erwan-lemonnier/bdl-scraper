@@ -1,4 +1,5 @@
 import logging
+import os
 from pymacaron.test import PyMacaronTestCase
 from pymacaron.auth import generate_token
 
@@ -50,3 +51,9 @@ class ScraperTests(PyMacaronTestCase):
             keys.append('native_picture_url')
         self.assertEqual(set(keys), set(['price', 'currency', 'is_sold', 'title', 'native_picture_url']))
         self.assertEqual(j['is_sold'], False)
+
+
+    def load_html(self, name):
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data/%s" % name)
+        with open(path, 'r') as f:
+            return f.read()

@@ -84,17 +84,16 @@ class TraderaCrawler(GenericCrawler):
         if not self.get_url(native_url):
             raise CannotGetUrlError("Failed to fetch url %s" % native_url)
 
+        log.debug("Scraping html: %s" % self.html[0:100])
+
         main = self.get_soup().find(class_='view-item')
-        assert main, "Failed to find view-item-main in %s" % native_url
+        assert main, "Failed to find view-item in %s" % native_url
 
         # Title and picture
-        tags = main.find_all('img', class_='image-gallery-item__image')
-        assert len(tags) > 0, "Failed to find main image in %s" % native_url
-        tag = tags[0]
-        native_picture_url = tag['src']
-        title = tag['alt']
-
-        native_picture_url = native_picture_url
+        tag = main.find('div', class_='image-gallery-item')
+        assert tag, "Failed to find item image in %s" % native_url
+        native_picture_url = tag.img['src']
+        title = tag.img['alt']
         assert native_picture_url.startswith('//')
 
         # Description

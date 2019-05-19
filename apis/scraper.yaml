@@ -195,6 +195,9 @@ definitions:
       async:
         description: If true (default), scan asynchronously in the background and return no objects. If false, scan synchronously and return all scanned objects.
         type: boolean
+      html:
+        type: string
+        description: (Optional) An HTML landing page to scan instead of fetching the live one.
     required:
       - source
 
@@ -213,6 +216,9 @@ definitions:
       native_url:
         type: string
         description: URL to the original web page to scrape.
+      html:
+        type: string
+        description: (Optional) An HTML page to scrape instead of fetching that at 'native_url'.
       scraper_data:
         type: string
         description: (Optional) Extra data provided by the scraper, as a json string.

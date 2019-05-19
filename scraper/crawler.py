@@ -26,18 +26,23 @@ has_webdriver = False
 class GenericCrawler():
     """Empty interface that all crawlers must implement"""
 
-    def __init__(self, source=None, consumer=None):
+    def __init__(self, source=None, consumer=None, pre_loaded_html=None):
         assert source, "source must be set"
         assert consumer, "consumer must be set"
         self.source = source
         self.consumer = consumer
-        self.retry_delay = 3
+        self.retry_delay = 1
+
         global has_webdriver
         if has_webdriver:
             self.driver = webdriver.Chrome()
             self.driver.implicitly_wait(30)
         # The soup
         self.soup = None
+        self.html = None
+
+        # Pre-load html, if available
+        self.pre_loaded_html = pre_loaded_html
 
 
     def scan(self):
@@ -61,51 +66,64 @@ class GenericCrawler():
 
     def get_url(self, url):
         """Fetch a url. Retry up to 3 times"""
-        log.debug("=> GET URL %s" % url)
-        retry = 4
-        while retry:
-            retry = retry - 1
-            sleep(1)
 
-            if not has_webdriver:
-                # Use browserless.io to fetch rendered pages
+        self.html = None
 
-                # Huh? requests does not work against browserless??
-                # r = requests.post(
-                #     'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key,
-                #     data={
-                #         'url': 'https://example.com/',
-                #     },
-                # )
+        if self.pre_loaded_html:
+            log.debug("Using pre-loaded html: %s.." % self.pre_loaded_html[0:50])
+            self.html = self.pre_loaded_html
+            self.pre_loaded_html = None
+        else:
+            log.debug("=> GET URL %s" % url)
+            retry = 4
+            while not self.html and retry:
+                retry = retry - 1
 
-                u = 'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key
-                data = '{"url": "%s"}' % url
-                b = subprocess.check_output(['curl', '-X', 'POST', u, '-H', 'Cache-Control: no-cache', '-H', 'Content-Type: application/json', '-d', data])
-                s = b.decode('utf-8')
+                if has_webdriver:
+                    try:
+                        log.info("Trying to fetch url %s" % url)
+                        # TODO: Use webdriver/selenium to fetch url
+                        self.driver.get_url()
+                        self.html = self.driver.page_source
+                    except requests.exceptions.ConnectionError as e:
+                        if retry:
+                            log.warn("Got a ConnectionError. Sleeping %ssec and retrying..." % self.retry_delay)
+                            sleep(self.retry_delay)
+                        else:
+                            raise e
 
-                log.debug("Browserless replies: %s" % s[0:100])
-                if '502 Bad Gateway' in s:
-                    log.debug("Bad gateway, duh. Sleep 1sec and retry")
-                    pass
                 else:
-                    # log.debug("Browserless replies: %s" % s)
-                    self.soup = BeautifulSoup(s, 'lxml')
-                    return True
+                    # Use browserless.io to fetch rendered pages
 
-            else:
-                try:
-                    log.info("Trying to fetch url %s" % url)
-                    # TODO: Use webdriver/selenium to fetch url
-                    self.driver.get_url()
-                    self.soup = BeautifulSoup(self.driver.page_source, 'lxml')
-                    return True
-                except requests.exceptions.ConnectionError as e:
-                    if retry:
-                        log.warn("Got a ConnectionError. Sleeping %ssec and retrying..." % self.retry_delay)
-                        sleep(self.retry_delay)
+                    # Huh? requests does not work against browserless??
+                    # r = requests.post(
+                    #     'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key,
+                    #     data={
+                    #         'url': 'https://example.com/',
+                    #     },
+                    # )
+
+                    u = 'https://chrome.browserless.io/content?token=%s' % get_config().browserless_api_key
+                    data = '{"url": "%s"}' % url
+                    b = subprocess.check_output(['curl', '-X', 'POST', u, '-H', 'Cache-Control: no-cache', '-H', 'Content-Type: application/json', '-d', data])
+                    html = b.decode('utf-8')
+
+                    log.debug("Browserless replies: %s" % html[0:100])
+                    if '502 Bad Gateway' in html:
+                        if retry:
+                            log.debug("Bad gateway, duh. Sleep %ssec and retry" % self.retry_delay)
+                            sleep(self.retry_delay)
+                        else:
+                            raise Exception("Browserless: Bad gateway")
                     else:
-                        raise e
-        return False
+                        self.html = html
+
+        if not self.html:
+            log.debug("Failed to get HTML from %s" % url)
+            return False
+
+        self.soup = BeautifulSoup(self.html, 'lxml')
+        return True
 
 
     def get_soup(self):

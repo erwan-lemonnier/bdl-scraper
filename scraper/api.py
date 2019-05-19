@@ -29,6 +29,7 @@ def do_scan_source(data):
         'epoch_oldest': data.epoch_oldest if data.epoch_oldest else now - 86400,
         'limit_sec': data.limit_sec if data.limit_sec else None,
         'limit_count': data.limit_count if data.limit_count else None,
+        'pre_loaded_html': data.html,
     }
 
     if data.async:
@@ -43,9 +44,9 @@ def do_scan_source(data):
     return crawler.consumer.get_scraped_objects()
 
 
-def do_scrape_source(source, data):
-    source = source.lower()
-    c = get_crawler(source)
+def do_scrape_source(data):
+    source = data.source.upper()
+    c = get_crawler(source, pre_loaded_html=data.html)
     return c.scrape(
         data.native_url,
         data.scraper_data,

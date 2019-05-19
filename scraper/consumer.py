@@ -11,7 +11,7 @@ from scraper.sources.blocket import BlocketCrawler
 log = logging.getLogger(__name__)
 
 
-def get_crawler(source, **args):
+def get_crawler(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
 
     crawler_classes = {
@@ -25,6 +25,7 @@ def get_crawler(source, **args):
 
     return crawler_classes.get(source)(
         source=source,
+        pre_loaded_html=pre_loaded_html,
         consumer=ItemConsumer(source, **args),
     )
 
