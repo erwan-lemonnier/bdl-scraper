@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import chromedriver_install as cdi
+from selenium.webdriver.support.ui import WebDriverWait
 from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
 from scraper.exceptions import ConsumerLimitReachedError
@@ -59,7 +60,7 @@ class GenericScraper():
 
         if WEBDRIVER_PATH:
             self.driver = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
-            self.driver.implicitly_wait(30)
+            self.driver.implicitly_wait(10)
         # The soup
         self.soup = None
         self.html = None
@@ -92,8 +93,12 @@ class GenericScraper():
         self.consumer.flush()
 
 
-    def get_url(self, url):
-        """Fetch a url. Retry up to 3 times"""
+    def get_url(self, url, wait_condition=None):
+        """Fetch a url. Retry up to 3 times. Optionally take a webdriver wait
+        condition, as described at
+        https://selenium-python.readthedocs.io/waits.html
+
+        """
 
         self.html = None
 
@@ -112,6 +117,8 @@ class GenericScraper():
                         log.info("Trying to fetch url %s" % url)
                         # TODO: Use webdriver/selenium to fetch url
                         self.driver.get(url)
+                        if wait_condition:
+                            WebDriverWait(self.driver, 10).until(wait_condition)
                         self.html = self.driver.page_source
                     except requests.exceptions.ConnectionError as e:
                         if retry:

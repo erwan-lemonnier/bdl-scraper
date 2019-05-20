@@ -2,6 +2,8 @@ import logging
 from urllib.parse import urlencode
 import json
 from dateutil import parser
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.crash import report_error
 from pymacaron.utils import to_epoch
@@ -41,7 +43,7 @@ class TraderaScraper(GenericScraper):
     def scrape(self, native_url, scraper_data=None):
         """Parse an announce on Tradera"""
 
-        if not self.get_url(native_url):
+        if not self.get_url(native_url, wait_condition=EC.presence_of_element_located((By.CLASS_NAME, "view-item-image-gallery"))):
             raise CannotGetUrlError("Failed to fetch url %s" % native_url)
 
         log.debug("Scraping html: %s" % self.html[0:100])
@@ -138,7 +140,10 @@ class TraderaScraper(GenericScraper):
                 while page_next:
 
                     # Fetch next listing page
-                    self.get_url(page_next)
+                    self.get_url(
+                        page_next,
+                        wait_condition=EC.presence_of_element_located((By.CLASS_NAME, "item-card-figure")),
+                    )
 
                     # Get the url of the next listing page to scrape
                     page_next = self.get_next_page_url()
