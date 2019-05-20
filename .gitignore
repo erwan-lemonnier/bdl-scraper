@@ -17,3 +17,5 @@ Dockerrun.aws.json
 !.elasticbeanstalk/*.global.yml
 
 .ebextensions
+
+setup.sh
