@@ -19,3 +19,5 @@ Dockerrun.aws.json
 .ebextensions
 
 setup.sh
+
+lib/chromedriver
