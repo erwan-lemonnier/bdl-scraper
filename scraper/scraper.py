@@ -37,6 +37,7 @@ except Exception as e:
 else:
     log.info("Chrome and webdriver are installed!")
 
+
 def get_crawler(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
 
@@ -70,6 +71,7 @@ class GenericScraper():
         self.retry_delay = 1
 
         global has_webdriver
+        self.driver = None
         if has_webdriver:
             self.driver = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
             self.driver.implicitly_wait(10)
