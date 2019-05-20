@@ -25,6 +25,17 @@ htmlparser = HTMLParser()
 # Install chromedriver if needed and return its path
 WEBDRIVER_PATH = cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None)
 
+# Test if chrome can be started
+has_webdriver = False
+try:
+    d = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
+    d.close()
+    has_webdriver = True
+except Exception as e:
+    log.info("Chrome does not seem to be installed: %s" % str(e))
+    log.info("Will use browserless.io instead.")
+else:
+    log.info("Chrome and webdriver are installed!")
 
 def get_crawler(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
