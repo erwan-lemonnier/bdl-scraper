@@ -68,6 +68,11 @@ class GenericScraper():
         self.pre_loaded_html = pre_loaded_html
 
 
+    def __del__(self):
+        if self.driver:
+            self.driver.close()
+
+
     def scan(self):
         raise Exception("Not implemented")
 
