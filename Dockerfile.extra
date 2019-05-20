@@ -5,9 +5,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo ap
     sudo apt-get update && \
 sudo apt-get install -y google-chrome-stable
 RUN pip install selenium chromedriver-install
-# RUN pip install chromedriver_installer \
-#    --install-option="--chromedriver-version=2.10" \
-#    --install-option="--chromedriver-checksums=4fecc99b066cb1a346035bf022607104,058cd8b7b4b9688507701b5e648fd821"
+RUN python -c "import chromedriver_install as cdi; print(cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None))"
 
 # Print chrome version
 RUN /usr/bin/google-chrome-stable --version

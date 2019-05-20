@@ -10,4 +10,5 @@ unidecode
 html2text
 keen
 forex-python
+chromedriver-install
 selenium
