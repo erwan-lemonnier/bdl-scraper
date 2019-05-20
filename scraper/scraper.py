@@ -28,7 +28,10 @@ WEBDRIVER_PATH = cdi.install(file_directory='./lib/', verbose=True, chmod=True, 
 # Test if chrome can be started
 has_webdriver = False
 try:
-    d = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
+    d = webdriver.Chrome(
+        executable_path=WEBDRIVER_PATH,
+        options=webdriver.ChromeOptions().add_argument('headless'),
+    )
     d.close()
     has_webdriver = True
 except Exception as e:
@@ -73,7 +76,12 @@ class GenericScraper():
         global has_webdriver
         self.driver = None
         if has_webdriver:
-            self.driver = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
+            options = webdriver.ChromeOptions()
+            options.add_argument('headless')
+            self.driver = webdriver.Chrome(
+                executable_path=WEBDRIVER_PATH,
+                options=webdriver.ChromeOptions().add_argument('headless'),
+            )
             self.driver.implicitly_wait(10)
         # The soup
         self.soup = None
