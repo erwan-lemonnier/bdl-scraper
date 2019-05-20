@@ -8,6 +8,7 @@ import requests.exceptions
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
+import chromedriver_install as cdi
 from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
 from scraper.exceptions import ConsumerLimitReachedError
@@ -20,8 +21,8 @@ log = logging.getLogger(__name__)
 htmlparser = HTMLParser()
 
 
-# TODO: implement proper check to know if chrome/webdriver is available
-has_webdriver = False
+# Install chromedriver if needed and return its path
+WEBDRIVER_PATH = cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None)
 
 
 def get_crawler(source, pre_loaded_html=None, **args):
@@ -56,9 +57,8 @@ class GenericScraper():
         self.consumer = consumer
         self.retry_delay = 1
 
-        global has_webdriver
-        if has_webdriver:
-            self.driver = webdriver.Chrome()
+        if WEBDRIVER_PATH:
+            self.driver = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
             self.driver.implicitly_wait(30)
         # The soup
         self.soup = None
@@ -102,11 +102,11 @@ class GenericScraper():
             while not self.html and retry:
                 retry = retry - 1
 
-                if has_webdriver:
+                if self.driver:
                     try:
                         log.info("Trying to fetch url %s" % url)
                         # TODO: Use webdriver/selenium to fetch url
-                        self.driver.get_url()
+                        self.driver.get(url)
                         self.html = self.driver.page_source
                     except requests.exceptions.ConnectionError as e:
                         if retry:
