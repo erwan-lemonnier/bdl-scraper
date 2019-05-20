@@ -2,7 +2,7 @@ import logging
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_async import asynctask
-from scraper.consumer import get_crawler
+from scraper.scraper import get_crawler
 
 
 log = logging.getLogger(__name__)

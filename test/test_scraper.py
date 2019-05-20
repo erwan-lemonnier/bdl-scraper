@@ -1,6 +1,6 @@
 import logging
 from unittest import TestCase
-from scraper.crawler import GenericCrawler
+from scraper.scraper import GenericScraper
 from scraper.consumer import ItemConsumer
 
 
@@ -13,7 +13,7 @@ class Tests(TestCase):
         self.maxDiff = None
 
     def test_html_to_text(self):
-        c = GenericCrawler(source='test', consumer=ItemConsumer(source='test'))
+        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
         tests = [
             # html, text
             ["", ""],
@@ -26,7 +26,7 @@ class Tests(TestCase):
 
 
     def test_find_number(self):
-        c = GenericCrawler(source='test', consumer=ItemConsumer(source='test'))
+        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
         tests = [
             # html, number
             ["<strong>Objektsnr:</strong>\n 351090548 \n", 351090548],

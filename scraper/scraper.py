@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from pymacaron.config import get_config
+from scraper.consumer import ItemConsumer
 from scraper.exceptions import ConsumerLimitReachedError
 from scraper.exceptions import ConsumerEpochReachedError
 
@@ -23,8 +24,30 @@ htmlparser = HTMLParser()
 has_webdriver = False
 
 
-class GenericCrawler():
-    """Empty interface that all crawlers must implement"""
+def get_crawler(source, pre_loaded_html=None, **args):
+    """Get a crawler for that source, properly initialized"""
+
+    from scraper.sources.tradera import TraderaScraper
+    from scraper.sources.blocket import BlocketScraper
+
+    crawler_classes = {
+        # source: crawler class
+        'TRADERA': TraderaScraper,
+        'BLOCKET': BlocketScraper,
+    }
+
+    if source not in crawler_classes:
+        raise Exception("Don't know how to process objects from source %s" % source)
+
+    return crawler_classes.get(source)(
+        source=source,
+        pre_loaded_html=pre_loaded_html,
+        consumer=ItemConsumer(source, **args),
+    )
+
+
+class GenericScraper():
+    """Empty interface that all scrapers must implement"""
 
     def __init__(self, source=None, consumer=None, pre_loaded_html=None):
         assert source, "source must be set"

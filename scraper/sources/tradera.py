@@ -5,7 +5,7 @@ from dateutil import parser
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.crash import report_error
 from pymacaron.utils import to_epoch
-from scraper.crawler import GenericCrawler
+from scraper.scraper import GenericScraper
 from scraper.exceptions import ParserError
 from scraper.exceptions import CannotGetUrlError
 from scraper.exceptions import SkipThisItem
@@ -29,53 +29,13 @@ TRADERA_CATEGORIES = [
     'konst-23',
 ]
 
-class TraderaCrawler(GenericCrawler):
+class TraderaScraper(GenericScraper):
 
     def __init__(self, **args):
         log.debug("TraderaCrawler got init args: %s" % args)
         super().__init__(**args)
         self.country = COUNTRY
         self.count_page = 0
-
-
-    def scan(self):
-
-        for category in TRADERA_CATEGORIES:
-
-            page_next = self.gen_first_page_url(category)
-            epoch_published = None
-
-            try:
-                while page_next:
-
-                    # Fetch next listing page
-                    self.get_url(page_next)
-
-                    # Get the url of the next listing page to scrape
-                    page_next = self.get_next_page_url()
-
-                    # scrape the current listing page
-                    for item in self.yield_listing_page_items():
-
-                        # The listing page does not show the publication time
-                        # of the announce, but we know that they are listed by
-                        # most recent first, so we get scrape the first item
-                        # and let the consumer check the epoch_published. If it
-                        # passes, all items in the page will pass as well, even
-                        # if their epoch_published is earlier than
-                        # epoch_oldest, but that's ok.
-                        if not epoch_published:
-                            log.info("Scraping and processing first item to get its epoch_published")
-                            item = self.scrape(item.native_url)
-
-                            epoch_published = item.bdlitem.epoch_published
-                            log.info("Using epoch_published=%s for all items on the scanned page" % epoch_published)
-
-                        else:
-                            self.consumer.process(item)
-
-            except ConsumerEpochReachedError:
-                log.info("Consumer reached epoch boundary for category %s - Proceed with next category" % category)
 
 
     def scrape(self, native_url, scraper_data=None):
@@ -165,6 +125,46 @@ class TraderaCrawler(GenericCrawler):
         log.debug("Scraped Tradera announce: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))
 
         return self.consumer.process(item)
+
+
+    def scan(self):
+
+        for category in TRADERA_CATEGORIES:
+
+            page_next = self.gen_first_page_url(category)
+            epoch_published = None
+
+            try:
+                while page_next:
+
+                    # Fetch next listing page
+                    self.get_url(page_next)
+
+                    # Get the url of the next listing page to scrape
+                    page_next = self.get_next_page_url()
+
+                    # scrape the current listing page
+                    for item in self.yield_listing_page_items():
+
+                        # The listing page does not show the publication time
+                        # of the announce, but we know that they are listed by
+                        # most recent first, so we get scrape the first item
+                        # and let the consumer check the epoch_published. If it
+                        # passes, all items in the page will pass as well, even
+                        # if their epoch_published is earlier than
+                        # epoch_oldest, but that's ok.
+                        if not epoch_published:
+                            log.info("Scraping and processing first item to get its epoch_published")
+                            item = self.scrape(item.native_url)
+
+                            epoch_published = item.bdlitem.epoch_published
+                            log.info("Using epoch_published=%s for all items on the scanned page" % epoch_published)
+
+                        else:
+                            self.consumer.process(item)
+
+            except ConsumerEpochReachedError:
+                log.info("Consumer reached epoch boundary for category %s - Proceed with next category" % category)
 
     #
     # Internal methods

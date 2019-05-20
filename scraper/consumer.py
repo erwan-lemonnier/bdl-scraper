@@ -1,33 +1,11 @@
 import logging
-import requests
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_core.swagger.apipool import ApiPool
 from scraper.exceptions import ConsumerLimitReachedError
 from scraper.exceptions import ConsumerEpochReachedError
-from scraper.sources.tradera import TraderaCrawler
-from scraper.sources.blocket import BlocketCrawler
 
 
 log = logging.getLogger(__name__)
-
-
-def get_crawler(source, pre_loaded_html=None, **args):
-    """Get a crawler for that source, properly initialized"""
-
-    crawler_classes = {
-        # source: crawler class
-        'TRADERA': TraderaCrawler,
-        'BLOCKET': BlocketCrawler,
-    }
-
-    if source not in crawler_classes:
-        raise Exception("Don't know how to process objects from source %s" % source)
-
-    return crawler_classes.get(source)(
-        source=source,
-        pre_loaded_html=pre_loaded_html,
-        consumer=ItemConsumer(source, **args),
-    )
 
 
 class ItemConsumer():
