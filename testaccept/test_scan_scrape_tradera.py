@@ -25,7 +25,7 @@ class Tests(common.ScraperTests):
             {
                 'source': 'TRADERA',
                 'limit_count': 10,
-                'async': False,
+                'synchronous': True,
             },
             auth='Bearer %s' % self.token,
         )

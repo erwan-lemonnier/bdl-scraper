@@ -23,6 +23,8 @@ def do_scan_source(data):
 
     source = data.source.upper()
     now = to_epoch(timenow())
+    if data.synchronous not in (False, True):
+        data.synchronous = False
 
     settings = {
         'epoch_youngest': data.epoch_youngest if data.epoch_youngest else now,
@@ -32,16 +34,17 @@ def do_scan_source(data):
         'pre_loaded_html': data.html,
     }
 
-    if data.async:
-        async_safe_scan(source, **settings)
-        return ApiPool.scraper.model.ScrapedObjects(
-            epoch_youngest=data.epoch_youngest,
-            epoch_oldest=data.epoch_oldest,
-        )
+    if data.synchronous:
+        crawler = scan(source, allow_flush=False, **settings)
+        return crawler.consumer.get_scraped_objects()
 
-    crawler = scan(source, allow_flush=False, **settings)
+    # Execute asynchronously
+    async_safe_scan(source, **settings)
+    return ApiPool.scraper.model.ScrapedObjects(
+        epoch_youngest=data.epoch_youngest,
+        epoch_oldest=data.epoch_oldest,
+    )
 
-    return crawler.consumer.get_scraped_objects()
 
 
 def do_scrape_source(data):

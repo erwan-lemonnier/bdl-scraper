@@ -192,8 +192,8 @@ definitions:
       limit_sec:
         description: Stop searching after that much time (Default 30 sec).
         type: number
-      async:
-        description: If true (default), scan asynchronously in the background and return no objects. If false, scan synchronously and return all scanned objects.
+      synchronous:
+        description: If false (default), scan asynchronously in the background and return no objects. If true, scan synchronously and return all scanned objects.
         type: boolean
       html:
         type: string
