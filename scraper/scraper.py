@@ -69,7 +69,8 @@ class GenericScraper():
         self.consumer = consumer
         self.retry_delay = 1
 
-        if WEBDRIVER_PATH:
+        global has_webdriver
+        if has_webdriver:
             self.driver = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
             self.driver.implicitly_wait(10)
         # The soup
