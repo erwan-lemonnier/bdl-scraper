@@ -25,12 +25,21 @@ htmlparser = HTMLParser()
 # Install chromedriver if needed and return its path
 WEBDRIVER_PATH = cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None)
 
+CHROME_OPTIONS = webdriver.ChromeOptions()
+CHROME_OPTIONS.add_argument('--no-sandbox')
+CHROME_OPTIONS.add_argument('--window-size=1420,1080')
+CHROME_OPTIONS.add_argument('--headless')
+CHROME_OPTIONS.add_argument('--disable-gpu')
+CHROME_OPTIONS.add_arguments('--disable-dev-shm-usage')
+CHROME_OPTIONS.add_arguments('disable-infobars')
+CHROME_OPTIONS.add_Arguments('--disable-extensions')
+
 # Test if chrome can be started
 has_webdriver = False
 try:
     d = webdriver.Chrome(
         executable_path=WEBDRIVER_PATH,
-        options=webdriver.ChromeOptions().add_argument('headless'),
+        options=CHROME_OPTIONS,
     )
     d.close()
     has_webdriver = True
@@ -80,7 +89,7 @@ class GenericScraper():
             options.add_argument('headless')
             self.driver = webdriver.Chrome(
                 executable_path=WEBDRIVER_PATH,
-                options=webdriver.ChromeOptions().add_argument('headless'),
+                options=CHROME_OPTIONS,
             )
             self.driver.implicitly_wait(10)
         # The soup
