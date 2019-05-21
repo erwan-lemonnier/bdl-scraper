@@ -30,9 +30,9 @@ CHROME_OPTIONS.add_argument('--no-sandbox')
 CHROME_OPTIONS.add_argument('--window-size=1420,1080')
 CHROME_OPTIONS.add_argument('--headless')
 CHROME_OPTIONS.add_argument('--disable-gpu')
-CHROME_OPTIONS.add_arguments('--disable-dev-shm-usage')
-CHROME_OPTIONS.add_arguments('disable-infobars')
-CHROME_OPTIONS.add_arguments('--disable-extensions')
+CHROME_OPTIONS.add_argument('--disable-dev-shm-usage')
+CHROME_OPTIONS.add_argument('disable-infobars')
+CHROME_OPTIONS.add_argument('--disable-extensions')
 
 # Test if chrome can be started
 has_webdriver = False
