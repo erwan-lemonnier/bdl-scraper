@@ -4,6 +4,7 @@ app_name_dev: BDL_SCRAPER_DEV
 
 docker_repo: peop
 docker_bucket: pym-config
+docker_base: pymacaron/scraper:190521-0957-29
 
 aws_user: bdl-backend-publish
 aws_keypair: aws-bdl
