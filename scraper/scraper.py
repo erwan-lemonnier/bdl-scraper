@@ -32,7 +32,7 @@ CHROME_OPTIONS.add_argument('--headless')
 CHROME_OPTIONS.add_argument('--disable-gpu')
 CHROME_OPTIONS.add_arguments('--disable-dev-shm-usage')
 CHROME_OPTIONS.add_arguments('disable-infobars')
-CHROME_OPTIONS.add_Arguments('--disable-extensions')
+CHROME_OPTIONS.add_arguments('--disable-extensions')
 
 # Test if chrome can be started
 has_webdriver = False
