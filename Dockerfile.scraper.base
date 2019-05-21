@@ -1,0 +1,20 @@
+# Build this Dockerfile with:
+# pymdockerbase --dockerfile Dockerfile.scraper.base --registry pymacaron/scraper
+
+FROM pymacaron/base:180827-1418-71
+MAINTAINER Erwan Lemonnier <erwan@lemonnier.se>
+
+# Install Chrome
+RUN apt-get update && apt-get install wget
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+RUN apt-get -y update
+RUN apt-get install -y google-chrome-stable
+RUN /bin/bash -c "source /pym/virtenv/bin/activate; pip install selenium chromedriver-install"
+RUN /bin/bash -c "source /pym/virtenv/bin/activate; python -c \"import chromedriver_install as cdi; print(cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None))\""
+
+# set display port to avoid crash
+ENV DISPLAY=:99
+
+# Print chrome version
+RUN /usr/bin/google-chrome-stable --version
