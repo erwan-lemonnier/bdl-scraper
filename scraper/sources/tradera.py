@@ -131,10 +131,11 @@ class TraderaScraper(GenericScraper):
         for category in TRADERA_CATEGORIES:
 
             page_next = self.gen_first_page_url(category)
-            epoch_published = None
 
             try:
                 while page_next:
+
+                    epoch_published = None
 
                     # Fetch next listing page
                     self.get_url(

@@ -43,7 +43,7 @@ class ItemConsumer():
 
         self.objects.append(object)
         self.count_items = self.count_items + 1
-        log.info("Scanned %s objects so far (limit is %s)" % (self.count_items, self.limit_count))
+        log.info("Scanned %s objects so far (Count limit is %s)" % (self.count_items, self.limit_count))
 
         # Do we keep processing?
         if self.limit_count and self.count_items >= self.limit_count:

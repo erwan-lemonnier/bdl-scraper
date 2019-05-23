@@ -58,7 +58,7 @@ def main(source, scan, scrape, host, port, async, limit_count, back_secs):
     )
 
     data = {}
-    data['source'] = source
+    data['source'] = source.upper()
     if not async:
         data['synchronous'] = True
     if scrape:
