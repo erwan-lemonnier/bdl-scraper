@@ -52,49 +52,6 @@ class Tests(TestCase):
         self.assertEqual(j, data)
 
 
-    def test_scrape__no_bid(self):
-        self.assertScrape(
-            'https://www.tradera.com/item/341181/351090548/oljehus-till-taklampa-i-porslin-med-brannare',
-            {
-                "is_complete": True,
-                "bdlitem": {
-                    "is_sold": False,
-                    "description": "Oljehuset är begagnat men i gott skick\nPorslinets totalhöjd ca 17 cm diameter i överkant ca 13 cm",
-                    "epoch_published": 1558013520,
-                    "title": "Oljehus till taklampa i porslin med br\u00e4nnare",
-                    "native_picture_url": "https://img.tradera.net/images/765/309572765_7153c62d-f6c2-443d-b4b3-97d6dd8e0eb8.jpg",
-                    "currency": "SEK",
-                    "price": 99,
-                    "price_is_fixed": False,
-                    "native_doc_id": 351090548,
-                    "native_seller_is_shop": False,
-                    "native_seller_name": "etta10",
-                }
-            }
-        )
-
-    def test_scrape__many_bids(self):
-        self.assertScrape(
-            'https://www.tradera.com/item/163102/350429852/rodebjer-m-kina-drop-prickiga-monstrad-byxor-chinos-colette-bla-orange',
-            {
-                "is_complete": True,
-                "bdlitem": {
-                    "is_sold": False,
-                    "description": "Mycket anv\u00e4nda och lagade rodebjer byxor. Stl M. Lagade Vid b\u00e5da fickorna och\ns\u00e5 ett lite h\u00e5l bak vid f\u00e5llen. Men det \u00e4r ju ett fint m\u00f6nster s\u00e5 dom g\u00e5r ju\nanv\u00e4nda och man ser inte att det \u00e4r lagat fr\u00e5n h\u00e5ll. :)",
-                    "epoch_published": 1557571800,
-                    "title": "Rodebjer m kina drop prickiga mönstrad byxor chinos Colette blå orange",
-                    "native_picture_url": "https://img.tradera.net/images/106/308987106_db01524a-6db6-4094-8922-885337bfdf3b.jpg",
-                    "currency": "SEK",
-                    "price": 409,
-                    "price_is_fixed": False,
-                    "native_doc_id": 350429852,
-                    "native_seller_name": "StyleLoft",
-                    "native_seller_is_shop": False,
-                }
-            }
-        )
-
-
     def test_scrape__fast_price(self):
         self.assertScrape(
             'https://www.tradera.com/item/340952/351064059/royal-caribbean-international-termosmugg-flerfargad',
