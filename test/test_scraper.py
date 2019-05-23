@@ -47,6 +47,7 @@ class Tests(TestCase):
             ['23 May 2019 20:57:00', None, 1558637820],
             ['23 May 2019 20:57:00', 'Europe/Stockholm', 1558637820],
             ['2019-05-23 20:57', None, 1558637820],
+            ['Thu May 23 22:02:14', None, 1558641734],
         ]
 
         for date, tzname, epoch in tests:
