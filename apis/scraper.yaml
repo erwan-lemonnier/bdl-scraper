@@ -222,6 +222,9 @@ definitions:
       scraper_data:
         type: string
         description: (Optional) Extra data provided by the scraper, as a json string.
+      synchronous:
+        description: If false (default), scrape asynchronously in the background and return no objects. If true, scrape synchronously and return the scraped data.
+        type: boolean
     required:
       - native_url
       - source

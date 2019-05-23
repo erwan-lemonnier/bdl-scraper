@@ -8,16 +8,9 @@ from scraper.scraper import get_crawler
 log = logging.getLogger(__name__)
 
 
-def scan(source, **args):
-    c = get_crawler(source, **args)
-    c.scan_and_flush()
-    return c
-
-
-@asynctask
-def async_safe_scan(source, **args):
-    scan(source, **args)
-
+#
+# SCAN
+#
 
 def do_scan_source(data):
 
@@ -46,11 +39,47 @@ def do_scan_source(data):
     )
 
 
+@asynctask
+def async_safe_scan(source, **args):
+    scan(source, **args)
+
+
+def scan(source, **args):
+    c = get_crawler(source, **args)
+    c.scan_and_flush()
+    return c
+
+
+#
+# SCRAPE
+#
 
 def do_scrape_source(data):
     source = data.source.upper()
-    c = get_crawler(source, pre_loaded_html=data.html)
+    if data.synchronous not in (False, True):
+        data.synchronous = True
+
+    settings = {
+        'pre_loaded_html': data.html if data.html else None,
+        'native_url': data.native_url,
+        'scraper_data': data.scraper_data,
+    }
+
+    if data.synchronous:
+        return scrape(source, **settings)
+
+    async_scrape(source, **settings)
+    return ApiPool.scraper.model.Ok
+
+
+def scrape(source, pre_loaded_html=None, native_url=None, scraper_data=None):
+    c = get_crawler(source, pre_loaded_html=pre_loaded_html)
     return c.scrape(
-        data.native_url,
-        data.scraper_data,
+        native_url,
+        scraper_data,
     )
+
+
+@asynctask
+def async_scrape(source, **kwargs):
+    scan(source, **kwargs)
