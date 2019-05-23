@@ -66,7 +66,7 @@ class TraderaScraper(GenericScraper):
         assert tag, "Failed to publication date in footer in %s" % native_url
         s = self.html_to_text(tag.text)
         s = s.split(':', 1)[1].strip()
-        epoch_published = self.date_to_epoch(s, timezone='GMT+02:00')
+        epoch_published = self.date_to_epoch(s, tzname='Europe/Stockholm')
 
         # Find price
         def string_to_price(s):
