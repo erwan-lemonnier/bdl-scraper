@@ -1,12 +1,10 @@
 import logging
 from urllib.parse import urlencode
 import json
-from dateutil import parser
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.crash import report_error
-from pymacaron.utils import to_epoch
 from scraper.scraper import GenericScraper
 from scraper.exceptions import ParserError
 from scraper.exceptions import CannotGetUrlError
@@ -68,8 +66,7 @@ class TraderaScraper(GenericScraper):
         assert tag, "Failed to publication date in footer in %s" % native_url
         s = self.html_to_text(tag.text)
         s = s.split(':', 1)[1].strip()
-        date = parser.parse(s + ' CET')
-        epoch_published = to_epoch(date)
+        epoch_published = self.date_to_epoch(s, timezone='GMT+02:00')
 
         # Find price
         def string_to_price(s):

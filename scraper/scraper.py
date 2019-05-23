@@ -6,6 +6,10 @@ from html.parser import HTMLParser
 from html2text import html2text
 import requests.exceptions
 import requests
+from dateutil import parser
+from datetime import datetime, timedelta, timezone
+import pytz
+from dateutil.tz import gettz
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import chromedriver_install as cdi
@@ -215,3 +219,26 @@ class GenericScraper():
         s = re.sub(r'[^\d]*$', '', s)
         s = s.replace(' ', '')
         return int(s)
+
+
+    def date_to_epoch(self, s, tzname=None):
+        """Parse a date string without timezone, of the form YYYY-MM-DD HH:MM into an
+        epoch, assuming Stockholm's timezone by default
+
+        """
+
+        # Convert first to a naive date
+        date = parser.parse(s, ignoretz=True)
+
+        # And add the timezone
+        if not tzname:
+            tz = pytz.timezone('Europe/Stockholm')
+        else:
+            tz = pytz.timezone(tzname)
+        date = tz.localize(date)
+
+        assert date.tzinfo
+
+        t0 = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        delta = (date - t0) / timedelta(seconds=1)
+        return int(delta)

@@ -38,3 +38,16 @@ class Tests(TestCase):
 
         for html, n in tests:
             self.assertEqual(c.find_number(html), n, "Converting '%s'" % html)
+
+
+    def test_date_to_epoch(self):
+        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
+        tests = [
+            # date, gmt, epoch
+            ['23 May 2019 20:57:00', None, 1558637820],
+            ['23 May 2019 20:57:00', 'Europe/Stockholm', 1558637820],
+            ['2019-05-23 20:57', None, 1558637820],
+        ]
+
+        for date, tzname, epoch in tests:
+            self.assertEqual(c.date_to_epoch(date, tzname=tzname), epoch, "Converting '%s'" % date)
