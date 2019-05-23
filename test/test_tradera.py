@@ -68,7 +68,8 @@ class Tests(TestCase):
                     "price_is_fixed": True,
                     "native_seller_is_shop": True,
                     "native_seller_name": "Sellpy",
-                    "native_doc_id": 351064059,
+                    "native_doc_id": '351064059',
+                    "country": 'SE',
                 }
             }
         )

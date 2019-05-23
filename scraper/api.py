@@ -8,6 +8,17 @@ from scraper.scraper import get_crawler
 log = logging.getLogger(__name__)
 
 
+def empty_response(source, epoch_youngest=None, epoch_oldest=None):
+    return ApiPool.scraper.model.ScrapedObjects(
+        index='BDL',
+        epoch_youngest=epoch_youngest,
+        epoch_oldest=epoch_oldest,
+        source=source.upper(),
+        real=True,
+        objects=[],
+    )
+
+
 #
 # SCAN
 #
@@ -27,25 +38,23 @@ def do_scan_source(data):
         'pre_loaded_html': data.html,
     }
 
+    log.debug("Scan settings are: %s" % settings)
     if data.synchronous:
-        crawler = scan(source, allow_flush=False, **settings)
-        return crawler.consumer.get_scraped_objects()
+        scraper = scan(source, allow_flush=False, **settings)
+        return scraper.consumer.get_scraped_objects()
 
     # Execute asynchronously
-    async_safe_scan(source, **settings)
-    return ApiPool.scraper.model.ScrapedObjects(
-        epoch_youngest=data.epoch_youngest,
-        epoch_oldest=data.epoch_oldest,
-    )
+    async_scan(source, **settings)
+    return empty_response(source, data.epoch_youngest, data.epoch_oldest)
 
 
-@asynctask
-def async_safe_scan(source, **args):
-    scan(source, **args)
+@asynctask()
+def async_scan(*args, **kwargs):
+    scan(*args, **kwargs)
 
 
-def scan(source, **args):
-    c = get_crawler(source, **args)
+def scan(source, **kwargs):
+    c = get_crawler(source, **kwargs)
     c.scan_and_flush()
     return c
 
@@ -66,20 +75,22 @@ def do_scrape_source(data):
     }
 
     if data.synchronous:
-        return scrape(source, **settings)
+        scraper = scrape(source, **settings)
+        return scraper.consumer.get_scraped_objects()
 
     async_scrape(source, **settings)
-    return ApiPool.scraper.model.Ok
+    return empty_response(source, data.epoch_youngest, data.epoch_oldest)
 
 
 def scrape(source, pre_loaded_html=None, native_url=None, scraper_data=None):
     c = get_crawler(source, pre_loaded_html=pre_loaded_html)
-    return c.scrape(
+    c.scrape(
         native_url,
         scraper_data,
     )
+    return c
 
 
-@asynctask
-def async_scrape(source, **kwargs):
-    scan(source, **kwargs)
+@asynctask()
+def async_scrape(*args, **kwargs):
+    scrape(*args, **kwargs)

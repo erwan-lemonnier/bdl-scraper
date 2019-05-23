@@ -108,14 +108,15 @@ class TraderaScraper(GenericScraper):
             native_url=native_url,
             bdlitem=ApiPool.scraper.model.BDLItem(
                 title=title,
-                price=price,
+                price=int(price),
                 price_is_fixed=price_is_fixed,
                 currency='SEK',
+                country='SE',
                 is_sold=False,
                 native_picture_url='https:' + native_picture_url,
                 description=description,
                 epoch_published=epoch_published,
-                native_doc_id=native_doc_id,
+                native_doc_id=str(native_doc_id),
                 native_seller_is_shop=native_seller_is_shop,
                 native_seller_name=native_seller_name,
             )
@@ -211,11 +212,12 @@ class TraderaScraper(GenericScraper):
         else:
             native_picture_url = tag.img['src']
             assert native_picture_url.startswith('//')
-            native_picture_url = 'https:' + native_picture_url,
+            native_picture_url = 'https:' + native_picture_url
 
         tag = card.find(class_='item-card-details-price-before-discount')
         price = tag.text
         assert price
+        assert price.isdigit()
 
         tag = card.find(class_='item-card-details-header')
         title = tag['title']
@@ -227,9 +229,10 @@ class TraderaScraper(GenericScraper):
             bdlitem=ApiPool.scraper.model.BDLItem(
                 is_sold=False,
                 title=title,
-                price=price,
+                price=int(price),
                 currency='SEK',
                 native_picture_url=native_picture_url,
+                country='SE',
             )
         )
 

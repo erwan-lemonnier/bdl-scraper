@@ -1,4 +1,7 @@
 import logging
+import json
+import requests
+from pymacaron.auth import generate_token
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_core.swagger.apipool import ApiPool
 from scraper.exceptions import ConsumerLimitReachedError
@@ -64,21 +67,36 @@ class ItemConsumer():
 
         log.debug("Flush: sending %s scanned objects to BDL api" % len(self.objects))
 
-        # r = requests.post(
-        #     'https://api.bazardelux.com/v1/'
-        # )
+        # Post to bazardelux v1/items/process
+        url = 'https://api.bazardelux.com/v1/items/process'
+        data = {
+            'index': 'BDL',
+            'source': self.source.upper(),
+            'real': True,
+            'epoch_youngest': self.epoch_youngest,
+            'epoch_oldest': self.epoch_oldest,
+            'objects': [ApiPool.scraper.model_to_json(o) for o in self.objects],
+        }
 
-        # And reset object queue
-        self.objects = []
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer %s' % generate_token('bdl-scraper', data={}, expire_in=6000)
+        }
+
+        log.info("=> Calling POST %s" % (url))
+        r = requests.post(url, data=json.dumps(data), headers=headers)
+        log.debug("Got reply %s" % r.text)
+        # TODO: check return code and retry 3 times if fails
 
 
     def get_scraped_objects(self):
         """Return a ScrapedObjects containing all scraped objects"""
 
         return ApiPool.scraper.model.ScrapedObjects(
+            index='BDL',
             epoch_youngest=self.epoch_youngest,
             epoch_oldest=self.epoch_oldest,
-            source=self.source,
+            source=self.source.upper(),
             real=True,
-            objects=self.objects,
+            objects=self.objects if self.objects else [],
         )
