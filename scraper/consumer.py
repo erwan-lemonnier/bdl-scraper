@@ -1,7 +1,4 @@
 import logging
-import json
-import requests
-from pymacaron.auth import generate_token
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_core.swagger.apipool import ApiPool
 from scraper.exceptions import ConsumerLimitReachedError

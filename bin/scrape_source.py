@@ -32,7 +32,7 @@ get_config(config_path)
 @click.command()
 @click.option('--source', required=True, metavar='SOURCE', help="Scrape or scan this source (tradera, blocket, etc)")
 @click.option('--scan/--no-scan', required=False, metavar='', help="Do a scan", default=False)
-@click.option('--scrape', required=False, metavar='URL', help="Or scan this url", default=None)
+@click.option('--scrape', required=False, metavar='URL', help="Or scrape this url", default=None)
 @click.option('--host', required=False, metavar='HOST', help="Call this host instead of api.bazardelux.com", default='api.bazardelux.com')
 @click.option('--port', required=False, metavar='PORT', help="Call this port instead of 443", default='443')
 @click.option('--async/--no-async', required=False, metavar='', help="Make the call asynchronous (otherwise wait and show result)", default=False)
@@ -41,6 +41,14 @@ get_config(config_path)
 def main(source, scan, scrape, host, port, async, limit_count, back_secs):
     """Scan or scrape a website using BDL's scrapers, either on api.bazardelux.com
     or locally.
+
+    Examples:
+
+    # Scan tradera for the last 10 new items\n
+    python bin/scrape_source.py --scan --async --limit-count 10 --source tradera
+
+    # Same, against the local server process\n
+    python bin/scrape_source.py --host 127.0.0.1 --port 8080 --scan --async --limit-count 10 --source tradera
 
     """
 
