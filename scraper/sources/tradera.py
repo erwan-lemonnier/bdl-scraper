@@ -68,22 +68,17 @@ class TraderaScraper(GenericScraper):
         s = s.split(':', 1)[1].strip()
         epoch_published = self.date_to_epoch(s, tzname='Europe/Stockholm')
 
-        # Find price
-        def string_to_price(s):
-            assert 'kr' in s
-            return self.find_number(s)
-
         price = None
         price_is_fixed = False
         tag = main.find(class_='view-item-fixed-price')
         if tag:
-            price = string_to_price(tag.text)
+            price = self.string_to_price(tag.text)
             price_is_fixed = True
         else:
             tag = main.find(class_='view-item-bidding-details')
             tag = tag.find(class_='multi-currency-display--bidding-details')
             price = tag['data-amount-in-sek']
-            price = string_to_price(price)
+            price = self.string_to_price(price)
 
         # Find object id
         tag = main.find(class_='view-item-footer-information-details-itemid')
@@ -108,7 +103,7 @@ class TraderaScraper(GenericScraper):
             native_url=native_url,
             bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
                 title=title,
-                price=int(price),
+                price=price,
                 price_is_fixed=price_is_fixed,
                 currency='SEK',
                 country='SE',
@@ -216,8 +211,7 @@ class TraderaScraper(GenericScraper):
 
         tag = card.find(class_='item-card-details-price-before-discount')
         price = tag.text
-        assert price
-        assert price.isdigit()
+        price = self.string_to_price(tag.text)
 
         tag = card.find(class_='item-card-details-header')
         title = tag['title']
@@ -274,3 +268,13 @@ class TraderaScraper(GenericScraper):
         log.info("Found next page! at %s" % href)
 
         return BASE_URL + href
+
+
+    def string_to_price(self, s):
+        """Take a tradera price and return a number"""
+        log.debug("looking at price [%s]" % s)
+        if 'kr' in s:
+            s = s.replace('kr', '')
+        else:
+            assert s.isdigit()
+        return self.find_number(s)

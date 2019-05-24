@@ -21,7 +21,12 @@ class ItemConsumer():
         self.count_items = 0
         self.last_scraped_object = None
         self.objects = []
+
+        # Allow flushing/emptying buffer or not
         self.allow_flush = allow_flush
+
+        # Auto-flush once the processed items buffer reached that many items
+        self.flush_count = 50
 
         log.info("Initialized consumer: allow_flush=%s limit_sec=%s limit_count=%s" % (allow_flush, limit_sec, limit_count))
         log.info("Initialized consumer: epoch_oldest=%s epoch_youngest=%s" % (epoch_oldest, epoch_youngest))
@@ -48,6 +53,11 @@ class ItemConsumer():
         # Do we keep processing?
         if self.limit_count and self.count_items >= self.limit_count:
             raise ConsumerLimitReachedError("The limit count of %s items have been fetched - Stopping now." % self.limit_count)
+
+        # Do we flush?
+        if self.allow_flush and len(self.objects) > self.flush_count:
+            log.info("Reached %s items - Calling flush" % len(self.objects))
+            self.flush()
 
         return object
 
@@ -90,6 +100,8 @@ class ItemConsumer():
             )
         )
 
+        # And empty the buffer
+        self.objects = []
 
     def get_scraped_objects(self):
         """Return a ScrapedObjects containing all scraped objects"""
