@@ -233,6 +233,12 @@ definitions:
     type: object
     description: Data from one of more scraped pages, to be processed.
     properties:
+      index:
+        type: string
+        description: Which index to store those items in.
+        enum:
+          - BDL
+          - MODEL
       source:
         type: string
         description: Where are those scraped objects from?
@@ -280,28 +286,31 @@ definitions:
         description: (Optional) Extra data provided by the scraper The scraper/marketplace to use for scraping.
       bdlitem:
         description: (Optional) Data describing an item for sale on bazardelux.
-        $ref: '#/definitions/BDLItem'
+        $ref: '#/definitions/ScrapedBDLItem'
       topmodel:
         description: (Optional) Data describing a top model.
-        $ref: '#/definitions/TopModel'
+        $ref: '#/definitions/ScrapedTopModel'
     required:
       - is_complete
       - native_url
 
 
-  TopModel:
+  ScrapedTopModel:
     type: object
-    description: Profile of a top model.
+    description: Scraped profile of a top model.
     additionalProperties: true
 
 
-  BDLItem:
+  ScrapedBDLItem:
     type: object
     description: Scraped data describing an item for sale on a p2p marketplace.
     properties:
       title:
         type: string
         description: Item title.
+      description:
+        type: string
+        description: Main description of the item.
       price:
         type: number
         format: amount

@@ -106,7 +106,7 @@ class TraderaScraper(GenericScraper):
         item = ApiPool.scraper.model.ScrapedObject(
             is_complete=True,
             native_url=native_url,
-            bdlitem=ApiPool.scraper.model.BDLItem(
+            bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
                 title=title,
                 price=int(price),
                 price_is_fixed=price_is_fixed,
@@ -226,7 +226,7 @@ class TraderaScraper(GenericScraper):
         item = ApiPool.scraper.model.ScrapedObject(
             is_complete=False,
             native_url=native_url,
-            bdlitem=ApiPool.scraper.model.BDLItem(
+            bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
                 is_sold=False,
                 title=title,
                 price=int(price),

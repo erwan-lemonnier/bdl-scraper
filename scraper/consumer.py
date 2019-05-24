@@ -67,26 +67,22 @@ class ItemConsumer():
 
         log.debug("Flush: sending %s scanned objects to BDL api" % len(self.objects))
 
-        # Post to bazardelux v1/items/process
-        url = 'https://api.bazardelux.com/v1/items/process'
-        data = {
-            'index': 'BDL',
-            'source': self.source.upper(),
-            'real': True,
-            'epoch_youngest': self.epoch_youngest,
-            'epoch_oldest': self.epoch_oldest,
-            'objects': [ApiPool.scraper.model_to_json(o) for o in self.objects],
-        }
+        data = ApiPool.bdl.model.ScrapedObjects(
+            index='BDL',
+            source=self.source.upper(),
+            real=True,
+            epoch_youngest=self.epoch_youngest,
+            epoch_oldest=self.epoch_oldest,
+            objects=[
+                ApiPool.bdl.json_to_model(
+                    'ScrapedObject',
+                    ApiPool.scraper.model_to_json(o),
+                ) for o in self.objects
+            ],
+        )
 
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer %s' % generate_token('bdl-scraper', data={}, expire_in=6000)
-        }
-
-        log.info("=> Calling POST %s" % (url))
-        r = requests.post(url, data=json.dumps(data), headers=headers)
-        log.debug("Got reply %s" % r.text)
-        # TODO: check return code and retry 3 times if fails
+        # And send the scraped objects to the BDL api
+        ApiPool.bdl.client.process_items(data)
 
 
     def get_scraped_objects(self):

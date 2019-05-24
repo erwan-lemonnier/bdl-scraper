@@ -34,10 +34,10 @@ class ScraperTests(PyMacaronTestCase):
         self.assertTrue(type(j['price']) is int)
         self.assertEqual(j['currency'], 'SEK')
         self.assertTrue(j['title'])
-        self.assertTrue(j['description'])
+        self.assertTrue(type(j['description']) is str)
         self.assertEqual(j['is_sold'], False)
         self.assertTrue(j['native_seller_is_shop'] in (True, False))
-        self.assertTrue(j['native_seller_name'])
+        self.assertTrue(type(j['native_seller_name']) is str)
         self.assertTrue(j['price_is_fixed'] in (True, False))
         self.assertEqual(j['country'], 'SE')
 
