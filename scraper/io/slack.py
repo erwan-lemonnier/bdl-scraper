@@ -29,7 +29,12 @@ def slack_info(source, message, channel=None):
     if not channel:
         channel = get_config().slack_channel
     do_slack(
-        "%s|%s: %s" % (source.upper(), HOSTNAME, message),
+        "%s %s|%s: %s" % (
+            str(timenow())[11:19],
+            source.upper(),
+            HOSTNAME,
+            message,
+        ),
         channel=channel,
         as_user='SCRAPER',
         emoji=':robot_face:',
