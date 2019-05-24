@@ -9,7 +9,6 @@ import requests
 from dateutil import parser
 from datetime import datetime, timedelta, timezone
 import pytz
-from dateutil.tz import gettz
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import chromedriver_install as cdi
@@ -18,6 +17,7 @@ from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
 from scraper.exceptions import ConsumerLimitReachedError
 from scraper.exceptions import ConsumerEpochReachedError
+from scraper.io.slack import slack_info
 
 
 log = logging.getLogger(__name__)
@@ -193,6 +193,13 @@ class GenericScraper():
             return False
 
         self.soup = BeautifulSoup(self.html, 'lxml')
+
+        slack_info(
+            self.source.upper(),
+            "fetched %s" % url,
+            channel=get_config().slack_urls,
+        )
+
         return True
 
 

@@ -2,6 +2,7 @@ import logging
 import requests
 import json
 import pprint
+import socket
 from pymacaron.utils import to_epoch, timenow
 from pymacaron.config import get_config
 from pymacaron_async import asynctask
@@ -9,6 +10,8 @@ from pymacaron_async import asynctask
 
 log = logging.getLogger(__name__)
 
+
+HOSTNAME = socket.gethostname()
 
 @asynctask()
 def async_slack(message, channel=None, as_user='bazardelux.com', emoji=':heart:', is_real=False):
@@ -20,6 +23,19 @@ def async_slack(message, channel=None, as_user='bazardelux.com', emoji=':heart:'
         emoji=emoji,
         is_real=is_real
     )
+
+
+def slack_info(source, message, channel=None):
+    if not channel:
+        channel = get_config().slack_channel
+    do_slack(
+        "%s|%s: %s" % (source.upper(), HOSTNAME, message),
+        channel=channel,
+        as_user='SCRAPER',
+        emoji=':robot_face:',
+        is_real=True,
+    )
+
 
 def do_slack(message, channel=None, as_user='bazardelux.com', emoji=':heart:', is_real=False):
     assert channel
