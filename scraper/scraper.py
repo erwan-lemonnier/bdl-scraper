@@ -1,5 +1,6 @@
 import logging
 import re
+import os
 import subprocess
 from time import sleep
 from html.parser import HTMLParser
@@ -26,7 +27,10 @@ htmlparser = HTMLParser()
 
 
 # Install chromedriver if needed and return its path
-WEBDRIVER_PATH = './lib/chromedriver'
+WEBDRIVER_PATH = '%s/../lib/chromedriver' % os.path.dirname(os.path.realpath(__file__))
+log.info("Assuming webdriver bin is at %s" % WEBDRIVER_PATH)
+os.environ["PATH"] += ':%s' % WEBDRIVER_PATH
+
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
 CHROME_OPTIONS.add_argument('--no-sandbox')
