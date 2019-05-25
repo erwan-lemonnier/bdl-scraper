@@ -1,5 +1,5 @@
 # Build this Dockerfile with:
-# pymdockerbase --dockerfile Dockerfile.scraper.base --registry pymacaron/scraper
+# pymdockerbase --dockerfile Dockerfile.scraper.base --registry pymacaron/scraper --push
 
 FROM pymacaron/base:180827-1418-71
 MAINTAINER Erwan Lemonnier <erwan@lemonnier.se>
