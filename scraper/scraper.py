@@ -113,7 +113,6 @@ class GenericScraper():
                     options=CHROME_OPTIONS,
                 )
                 self.has_webdriver = True
-                self.drivers.append(driver)
                 return driver
             except Exception as e:
                 log.info("Chrome does not seem to be installed: %s" % str(e))
