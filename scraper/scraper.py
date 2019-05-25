@@ -38,21 +38,6 @@ CHROME_OPTIONS.add_argument('--disable-dev-shm-usage')
 CHROME_OPTIONS.add_argument('disable-infobars')
 CHROME_OPTIONS.add_argument('--disable-extensions')
 
-# Test if chrome can be started
-has_webdriver = False
-try:
-    d = webdriver.Chrome(
-        executable_path=WEBDRIVER_PATH,
-        options=CHROME_OPTIONS,
-    )
-    d.close()
-    has_webdriver = True
-except Exception as e:
-    log.info("Chrome does not seem to be installed: %s" % str(e))
-    log.info("Will use browserless.io instead.")
-else:
-    log.info("Chrome and webdriver are installed!")
-
 
 def get_crawler(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
@@ -86,27 +71,14 @@ class GenericScraper():
         self.consumer = consumer
         self.retry_delay = 1
 
-        global has_webdriver
-        self.driver = None
-        if has_webdriver:
-            options = webdriver.ChromeOptions()
-            options.add_argument('headless')
-            self.driver = webdriver.Chrome(
-                executable_path=WEBDRIVER_PATH,
-                options=CHROME_OPTIONS,
-            )
-            self.driver.implicitly_wait(10)
+        self.has_webdriver = None
+
         # The soup
         self.soup = None
         self.html = None
 
         # Pre-load html, if available
         self.pre_loaded_html = pre_loaded_html
-
-
-    def __del__(self):
-        if self.driver:
-            self.driver.close()
 
 
     def scan(self):
@@ -128,6 +100,28 @@ class GenericScraper():
         self.consumer.flush()
 
 
+    def get_webdriver(self):
+        """Return webdriver if it is available on the host, else None"""
+
+        if self.has_webdriver is False:
+            return None
+        elif self.has_webdriver in (None, True):
+            # Test if chrome can be started
+            try:
+                driver = webdriver.Chrome(
+                    executable_path=WEBDRIVER_PATH,
+                    options=CHROME_OPTIONS,
+                )
+                self.has_webdriver = True
+                self.drivers.append(driver)
+                return driver
+            except Exception as e:
+                log.info("Chrome does not seem to be installed: %s" % str(e))
+                log.info("Will use browserless.io instead.")
+                self.has_webdriver = False
+                return None
+
+
     def get_url(self, url, wait_condition=None):
         """Fetch a url. Retry up to 3 times. Optionally take a webdriver wait
         condition, as described at
@@ -147,20 +141,24 @@ class GenericScraper():
             while not self.html and retry:
                 retry = retry - 1
 
-                if self.driver:
+                driver = self.get_webdriver()
+                if driver:
                     try:
                         log.info("Trying to fetch url %s" % url)
                         # TODO: Use webdriver/selenium to fetch url
-                        self.driver.get(url)
+                        driver.get(url)
                         if wait_condition:
-                            WebDriverWait(self.driver, 10).until(wait_condition)
-                        self.html = self.driver.page_source
+                            WebDriverWait(driver, 10).until(wait_condition)
                     except requests.exceptions.ConnectionError as e:
                         if retry:
                             log.warn("Got a ConnectionError. Sleeping %ssec and retrying..." % self.retry_delay)
                             sleep(self.retry_delay)
                         else:
+                            driver.close()
                             raise e
+
+                    self.html = driver.page_source
+                    driver.close()
 
                 else:
                     # Use browserless.io to fetch rendered pages
