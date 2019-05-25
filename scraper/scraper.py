@@ -11,7 +11,6 @@ from datetime import datetime, timedelta, timezone
 import pytz
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import chromedriver_install as cdi
 from selenium.webdriver.support.ui import WebDriverWait
 from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
@@ -27,7 +26,7 @@ htmlparser = HTMLParser()
 
 
 # Install chromedriver if needed and return its path
-WEBDRIVER_PATH = cdi.install(file_directory='./lib/', verbose=True, chmod=True, overwrite=False, version=None)
+WEBDRIVER_PATH = './lib/chromedriver'
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
 CHROME_OPTIONS.add_argument('--no-sandbox')
