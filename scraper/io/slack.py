@@ -5,24 +5,12 @@ import pprint
 import socket
 from pymacaron.utils import to_epoch, timenow
 from pymacaron.config import get_config
-from pymacaron_async import asynctask
 
 
 log = logging.getLogger(__name__)
 
 
 HOSTNAME = socket.gethostname()
-
-@asynctask()
-def async_slack(message, channel=None, as_user='bazardelux.com', emoji=':heart:', is_real=False):
-    """Asynchronous slack call"""
-    do_slack(
-        message,
-        channel=channel,
-        as_user=as_user,
-        emoji=emoji,
-        is_real=is_real
-    )
 
 
 def slack_info(source, message, channel=None):
