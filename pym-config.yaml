@@ -1,6 +1,7 @@
 name: bdl-scraper
 app_name_live: BDL_SCRAPER_LIVE
 app_name_dev: BDL_SCRAPER_DEV
+worker_count: 2
 
 docker_repo: peop
 docker_bucket: pym-config
