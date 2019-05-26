@@ -26,11 +26,12 @@ log = logging.getLogger(__name__)
 htmlparser = HTMLParser()
 
 
-# Install chromedriver if needed and return its path
-WEBDRIVER_PATH = '%s/../lib/chromedriver' % os.path.dirname(os.path.realpath(__file__))
-log.info("Assuming webdriver bin is at %s" % WEBDRIVER_PATH)
-os.environ["PATH"] += ':%s' % WEBDRIVER_PATH
-
+# Try finding chromedriver if needed and return its path
+HERE = os.path.dirname(os.path.realpath(__file__))
+os.environ['PATH'] += ':%s/../lib/:/pym/lib' % HERE
+log.info("Searching for chromedriver in PATH=%s" % os.environ['PATH'])
+WEBDRIVER_PATH = os.popen('which chromedriver').read().strip()
+log.info("Found chromedriver at %s" % WEBDRIVER_PATH)
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
 CHROME_OPTIONS.add_argument('--no-sandbox')
@@ -107,6 +108,9 @@ class GenericScraper():
         """Return webdriver if it is available on the host, else None"""
 
         if self.has_webdriver is False:
+            return None
+        elif WEBDRIVER_PATH == '':
+            self.has_webdriver = False
             return None
         elif self.has_webdriver in (None, True):
             # Test if chrome can be started
