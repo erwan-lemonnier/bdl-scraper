@@ -85,6 +85,7 @@ class Tests(common.ScraperTests):
                             "price_is_fixed": True,
                             "title": "Royal Caribbean International, Termosmugg, Flerf\u00e4rgad",
                             "country": "SE",
+                            "language": "sv",
                         },
                         "is_complete": True,
                         "native_url": "doesnotmatter"
@@ -126,6 +127,7 @@ class Tests(common.ScraperTests):
                             "price_is_fixed": False,
                             "title": "Mini K\u00e5nken Fj\u00e4llr\u00e4ven, lila",
                             "country": "SE",
+                            "language": "sv",
                         },
                         "is_complete": True,
                         "native_url": "doesnotmatter"

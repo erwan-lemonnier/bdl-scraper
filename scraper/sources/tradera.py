@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 
 
 COUNTRY = 'SE'
+LANGUAGE = 'sv'
 BASE_URL = 'https://www.tradera.com'
 
 TRADERA_CATEGORIES = [
@@ -35,6 +36,7 @@ class TraderaScraper(GenericScraper):
         log.debug("TraderaCrawler got init args: %s" % args)
         super().__init__(**args)
         self.country = COUNTRY
+        self.language = LANGUAGE
         self.count_page = 0
 
 
@@ -106,7 +108,8 @@ class TraderaScraper(GenericScraper):
                 price=price,
                 price_is_fixed=price_is_fixed,
                 currency='SEK',
-                country='SE',
+                country=self.country,
+                language=self.language,
                 is_sold=False,
                 native_picture_url='https:' + native_picture_url,
                 description=description,
@@ -226,7 +229,8 @@ class TraderaScraper(GenericScraper):
                 price=int(price),
                 currency='SEK',
                 native_picture_url=native_picture_url,
-                country='SE',
+                country=self.country,
+                language=self.language,
             )
         )
 
