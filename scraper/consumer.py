@@ -78,8 +78,6 @@ class ItemConsumer():
             index='BDL',
             source=self.source.upper(),
             real=True,
-            epoch_youngest=self.epoch_youngest,
-            epoch_oldest=self.epoch_oldest,
             objects=[
                 ApiPool.bdl.json_to_model(
                     'ScrapedObject',
@@ -105,13 +103,12 @@ class ItemConsumer():
         # And empty the buffer
         self.objects = []
 
+
     def get_scraped_objects(self):
         """Return a ScrapedObjects containing all scraped objects"""
 
         return ApiPool.scraper.model.ScrapedObjects(
             index='BDL',
-            epoch_youngest=self.epoch_youngest,
-            epoch_oldest=self.epoch_oldest,
             source=self.source.upper(),
             real=True,
             objects=self.objects if self.objects else [],

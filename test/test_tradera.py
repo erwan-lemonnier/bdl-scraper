@@ -71,6 +71,7 @@ class Tests(TestCase):
                     "native_seller_name": "Sellpy",
                     "native_doc_id": '351064059',
                     "country": 'SE',
+                    "language": 'sv',
                 }
             }
         )
@@ -89,6 +90,7 @@ class Tests(TestCase):
                         "native_picture_url": "https://img.tradera.net/medium/946/310361946_5c073647-1a6e-4374-bb69-e8bcc55b41b5.jpg",
                         "price": 150,
                         "country": "SE",
+                        "language": 'sv',
                         "title": "Lars Lerin affisch"
                     },
                     "native_url": "https://www.tradera.com/item/2305/351972834/lars-lerin-affisch",
@@ -102,6 +104,7 @@ class Tests(TestCase):
                     "native_url": "https://www.tradera.com/item/341167/351974593/2st-servettringar-royal-albert-",
                     "bdlitem": {
                         "country": "SE",
+                        "language": 'sv',
                         "price": 55,
                         "currency": "SEK",
                         "title": "2ST SERVETTRINGAR ROYAL ALBERT ",

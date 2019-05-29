@@ -8,11 +8,9 @@ from scraper.scraper import get_crawler
 log = logging.getLogger(__name__)
 
 
-def empty_response(source, epoch_youngest=None, epoch_oldest=None, **whatever):
+def empty_response(source, **whatever):
     return ApiPool.scraper.model.ScrapedObjects(
         index='BDL',
-        epoch_youngest=epoch_youngest,
-        epoch_oldest=epoch_oldest,
         source=source.upper(),
         real=True,
         objects=[],

@@ -25,8 +25,6 @@ class Tests(common.ScraperTests):
         self.assertEqual(
             j,
             {
-                'epoch_youngest': j['epoch_youngest'],
-                'epoch_oldest': j['epoch_oldest'],
                 'source': 'TEST',
                 'real': True,
                 'index': 'BDL',
@@ -48,8 +46,6 @@ class Tests(common.ScraperTests):
         self.assertEqual(
             j,
             {
-                'epoch_youngest': j['epoch_youngest'],
-                'epoch_oldest': j['epoch_oldest'],
                 'source': 'TEST',
                 'real': True,
                 'index': 'BDL',
