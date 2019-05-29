@@ -34,6 +34,7 @@ error_definitions = [
     ('CONSUMER_LIMIT_REACHED', 404, 'ConsumerLimitReachedError', lambda s: s),
     ('CONSUMER_EPOCH_REACHED', 404, 'ConsumerEpochReachedError', lambda s: s),
     ('SKIP_ITEM_ERROR', 404, 'SkipThisItem', lambda s: s),
+    ('UNKNOWN_SOURCE_ERROR', 404, 'UnknownSourceError', lambda s: s),
 ]
 
 

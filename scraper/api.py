@@ -8,7 +8,7 @@ from scraper.scraper import get_crawler
 log = logging.getLogger(__name__)
 
 
-def empty_response(source, epoch_youngest=None, epoch_oldest=None):
+def empty_response(source, epoch_youngest=None, epoch_oldest=None, **whatever):
     return ApiPool.scraper.model.ScrapedObjects(
         index='BDL',
         epoch_youngest=epoch_youngest,
@@ -45,7 +45,7 @@ def do_scan_source(data):
 
     # Execute asynchronously
     async_scan(source, **settings)
-    return empty_response(source, data.epoch_youngest, data.epoch_oldest)
+    return empty_response(source, **settings)
 
 
 @asynctask()
@@ -79,7 +79,7 @@ def do_scrape_source(data):
         return scraper.consumer.get_scraped_objects()
 
     async_scrape(source, **settings)
-    return empty_response(source, data.epoch_youngest, data.epoch_oldest)
+    return empty_response(source, **settings)
 
 
 def scrape(source, pre_loaded_html=None, native_url=None, scraper_data=None):

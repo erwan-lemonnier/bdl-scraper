@@ -17,6 +17,7 @@ from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
 from scraper.exceptions import ConsumerLimitReachedError
 from scraper.exceptions import ConsumerEpochReachedError
+from scraper.exceptions import UnknownSourceError
 from scraper.io.slack import slack_info
 
 
@@ -48,15 +49,17 @@ def get_crawler(source, pre_loaded_html=None, **args):
 
     from scraper.sources.tradera import TraderaScraper
     from scraper.sources.blocket import BlocketScraper
+    from scraper.sources.test import TestScraper
 
     crawler_classes = {
         # source: crawler class
         'TRADERA': TraderaScraper,
         'BLOCKET': BlocketScraper,
+        'TEST': TestScraper,
     }
 
     if source not in crawler_classes:
-        raise Exception("Don't know how to process objects from source %s" % source)
+        raise UnknownSourceError("Don't know how to process objects from source %s" % source)
 
     return crawler_classes.get(source)(
         source=source,

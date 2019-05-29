@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class Tests(common.ScraperTests):
 
-    def test_v1_tradera_scan__auth_required(self):
+    def test_v1_scraper_scan__tradera__auth_required(self):
         self.assertPostReturnError(
             'v1/scraper/scan',
             {'source': 'TEST'},
@@ -19,7 +19,7 @@ class Tests(common.ScraperTests):
             'AUTHORIZATION_HEADER_MISSING',
         )
 
-    def test_v1_tradera_scan__live__10_items(self):
+    def test_v1_scraper_scan__tradera__live__10_items(self):
         j = self.assertPostReturnJson(
             'v1/scraper/scan',
             {
@@ -53,7 +53,7 @@ class Tests(common.ScraperTests):
             self.assertIsIncompleteTraderaItem(j)
 
 
-    def test_v1_tradera_scrape__html__no_bid__shop(self):
+    def test_v1_scraper_scrape__tradera__html__no_bid__shop(self):
         j = self.assertPostReturnJson(
             'v1/scraper/scrape',
             {
@@ -94,7 +94,7 @@ class Tests(common.ScraperTests):
         )
 
 
-    def test_v1_tradera_scrape__html__many_bids(self):
+    def test_v1_scraper_scrape__tradera__html__many_bids(self):
         j = self.assertPostReturnJson(
             'v1/scraper/scrape',
             {

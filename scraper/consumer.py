@@ -93,10 +93,12 @@ class ItemConsumer():
 
         slack_info(
             self.source,
-            "Flushed %s items (1st one: %s | %s)" % (
+            "Flushed %s items %s" % (
                 len(self.objects),
-                self.objects[0].native_url,
-                'complete' if self.objects[0].is_complete else 'incomplete',
+                '' if len(self.objects) == 0 else '(1st one: %s | %s)' % (
+                    self.objects[0].native_url,
+                    'complete' if self.objects[0].is_complete else 'incomplete',
+                ),
             )
         )
 
