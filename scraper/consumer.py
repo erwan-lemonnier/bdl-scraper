@@ -1,8 +1,10 @@
 import logging
 from pymacaron.utils import to_epoch, timenow
+from pymacaron.exceptions import is_error
 from pymacaron_core.swagger.apipool import ApiPool
 from scraper.exceptions import ConsumerLimitReachedError
 from scraper.exceptions import ConsumerEpochReachedError
+from scraper.exceptions import ApiCallError
 from scraper.io.slack import slack_info
 
 log = logging.getLogger(__name__)
@@ -87,7 +89,9 @@ class ItemConsumer():
         )
 
         # And send the scraped objects to the BDL api
-        ApiPool.bdl.client.process_items(data)
+        r = ApiPool.bdl.client.process_items(data)
+        if is_error(r):
+            raise ApiCallError("Flush error: %s" % r.error_description)
 
         slack_info(
             self.source,
