@@ -58,6 +58,7 @@ class Tests(common.ScraperTests):
                 'source': 'TRADERA',
                 'native_url': 'doesnotmatter',
                 'html': self.load_html('tradera__no_bid__shop.html'),
+                'synchronous': True,
             },
             auth='Bearer %s' % self.token,
         )
@@ -100,6 +101,7 @@ class Tests(common.ScraperTests):
                 'source': 'TRADERA',
                 'native_url': 'doesnotmatter',
                 'html': self.load_html('tradera__many_bids.html'),
+                'synchronous': True,
             },
             auth='Bearer %s' % self.token,
         )

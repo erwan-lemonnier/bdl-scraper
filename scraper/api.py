@@ -77,7 +77,7 @@ def scan(source, **kwargs):
 def do_scrape_source(data):
     source = data.source.upper()
     if data.synchronous not in (False, True):
-        data.synchronous = True
+        data.synchronous = False
 
     settings = {
         'pre_loaded_html': data.html if data.html else None,
