@@ -15,8 +15,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from pymacaron.config import get_config
 from scraper.consumer import ItemConsumer
-from scraper.exceptions import ConsumerLimitReachedError
-from scraper.exceptions import ConsumerEpochReachedError
 from scraper.exceptions import UnknownSourceError
 from scraper.io.slack import slack_info
 
@@ -44,7 +42,7 @@ CHROME_OPTIONS.add_argument('disable-infobars')
 CHROME_OPTIONS.add_argument('--disable-extensions')
 
 
-def get_crawler(source, pre_loaded_html=None, **args):
+def get_scraper(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
 
     from scraper.sources.tradera import TraderaScraper
@@ -94,17 +92,6 @@ class GenericScraper():
 
     def scrape(self, url, scraper_data=None):
         raise Exception("Not implemented")
-
-
-    def scan_and_flush(self):
-        """Call self.scan() within try loops that catch consumer limit errors"""
-        try:
-            self.scan()
-        except ConsumerLimitReachedError as e:
-            log.info(str(e))
-        except ConsumerEpochReachedError as e:
-            log.info(str(e))
-        self.consumer.flush()
 
 
     def get_webdriver(self):
