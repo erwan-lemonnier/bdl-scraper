@@ -1,6 +1,7 @@
 import logging
 from urllib.parse import urlencode
 import json
+from datetime import datetime
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from pymacaron_core.swagger.apipool import ApiPool
@@ -47,6 +48,42 @@ class TraderaScraper(GenericScraper):
             raise CannotGetUrlError("Failed to fetch url %s" % native_url)
 
         log.debug("Scraping html: %s" % self.html[0:100])
+
+        #
+        # Has the announce ended?
+        #
+
+        end_label_node = self.get_soup().find(class_='view-item-ended-summary-label')
+        if end_label_node:
+            date_ended_node = end_label_node.findNext('span')
+            assert date_ended_node, "Failed to find end date span in %s" % native_url
+            date_ended_str = date_ended_node.text
+
+            # Now the date looks like '	30 maj 10:31'
+
+            # Add year to date
+            year_now = datetime.now().year
+            date_ended_str = '%s %s' % (year_now, date_ended_str)
+
+            # Format Swedish months to english
+            date_ended_str = date_ended_str.replace('maj', 'may').replace('okt', 'oct')
+
+            from dateutil import parser
+            date_ended = parser.parse(date_ended_str, ignoretz=True)
+
+            item = ApiPool.scraper.model.ScrapedObject(
+                is_complete=False,
+                native_url=native_url,
+                bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
+                    has_ended=True,
+                    date_ended=date_ended,
+                )
+            )
+            return self.consumer.process(item)
+
+        #
+        # Item is still for sale
+        #
 
         main = self.get_soup().find(class_='view-item')
         assert main, "Failed to find view-item in %s" % native_url
@@ -110,7 +147,7 @@ class TraderaScraper(GenericScraper):
                 currency='SEK',
                 country=self.country,
                 language=self.language,
-                is_sold=False,
+                has_ended=False,
                 native_picture_url='https:' + native_picture_url,
                 description=description,
                 epoch_published=epoch_published,
@@ -224,7 +261,7 @@ class TraderaScraper(GenericScraper):
             is_complete=False,
             native_url=native_url,
             bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
-                is_sold=False,
+                has_ended=False,
                 title=title,
                 price=int(price),
                 currency='SEK',

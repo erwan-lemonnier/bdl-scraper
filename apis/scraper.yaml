@@ -328,9 +328,16 @@ definitions:
         type: string
         format: country_code
         description: Country where this item is/was sold.
-      is_sold:
+      has_ended:
         type: boolean
         description: Whether this item is still for sale or not.
+      date_ended:
+        type: string
+        format: date-time
+        description: (Optional) Date at which this item was removed from sale.
+      is_sold:
+        type: boolean
+        description: True is we know that this item has been sold.
       price_sold:
         type: number
         format: amount
@@ -338,7 +345,7 @@ definitions:
       date_sold:
         type: string
         format: date-time
-        description: (Optional) Date at which this item was marked as sold.
+        description: (Optional) Date at which this item was sold.
       epoch_published:
         type: number
         description: (Optional) When this announce was published.
@@ -367,7 +374,7 @@ definitions:
         type: string
         description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
     required:
-      - is_sold
+      - has_ended
 
 
   #

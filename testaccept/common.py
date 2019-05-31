@@ -35,7 +35,13 @@ class ScraperTests(PyMacaronTestCase):
         self.assertEqual(j['currency'], 'SEK')
         self.assertTrue(j['title'])
         self.assertTrue(type(j['description']) is str)
-        self.assertEqual(j['is_sold'], False)
+        self.assertTrue(j['has_ended'] in (True, False))
+        if j['has_ended']:
+            self.assertTrue('date_ended' in j)
+        else:
+            self.assertTrue('is_sold' not in j)
+            self.assertTrue('price_sold' not in j)
+            self.assertTrue('date_sold' not in j)
         self.assertTrue(j['native_seller_is_shop'] in (True, False))
         self.assertTrue(type(j['native_seller_name']) is str)
         self.assertTrue(j['price_is_fixed'] in (True, False))
@@ -51,8 +57,8 @@ class ScraperTests(PyMacaronTestCase):
         # native_picture_url is sometimes set. not always
         if 'native_picture_url' not in keys:
             keys.append('native_picture_url')
-        self.assertEqual(set(keys), set(['price', 'currency', 'is_sold', 'title', 'native_picture_url', 'country', 'language']))
-        self.assertEqual(j['is_sold'], False)
+        self.assertEqual(set(keys), set(['price', 'currency', 'has_ended', 'title', 'native_picture_url', 'country', 'language']))
+        self.assertEqual(j['has_ended'], False)
         self.assertTrue(type(j['price']) is int)
         self.assertEqual(j['country'], 'SE')
         self.assertEqual(j['language'], 'sv')
