@@ -50,6 +50,11 @@ def main(source, scan, scrape, host, port, async, limit_count, back_secs):
     # Same, against the local server process\n
     python bin/scrape_source.py --host 127.0.0.1 --port 8080 --scan --async --limit-count 10 --source tradera
 
+    # Test various error types in the TEST scraper
+    python bin/scrape_source.py --source test --scrape assert
+    python bin/scrape_source.py --source test --scrape crash
+    python bin/scrape_source.py --source test --scrape error
+
     """
 
     log.debug("host = %s  | port = %s (type: %s)" % (host, port, type(port)))

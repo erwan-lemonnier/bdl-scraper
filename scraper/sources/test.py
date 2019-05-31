@@ -1,5 +1,6 @@
 import logging
 from scraper.scraper import GenericScraper
+from scraper.exceptions import InternalServerError
 
 
 log = logging.getLogger(__name__)
@@ -12,6 +13,15 @@ class TestScraper(GenericScraper):
         """Simulate scraping a url"""
 
         log.info("TEST: mock scraping url %s" % native_url)
+
+        if 'assert' in native_url:
+            assert 0, "Test failing an assert"
+
+        if 'crash' in native_url:
+            int("bob")
+
+        if 'error' in native_url:
+            raise InternalServerError("Test raising fatal error")
 
         return None
 
