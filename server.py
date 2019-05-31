@@ -5,9 +5,16 @@ from pymacaron import API, letsgo
 from scraper.formats import get_custom_formats
 from scraper.exceptions import error_reporter
 
+
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+
+#
+# Endpoints for exporting user data
+#
+
 
 def start(port=None, debug=None):
 

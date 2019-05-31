@@ -12,3 +12,4 @@ keen
 forex-python
 chromedriver-install
 selenium
+boto

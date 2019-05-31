@@ -1,6 +1,8 @@
 import logging
 from pymacaron.exceptions import PyMacaronException
+from pymacaron.config import get_config
 from scraper.io.slack import slack_error
+from scraper.io.ses import send_email
 
 
 log = logging.getLogger(__name__)
@@ -8,6 +10,17 @@ log = logging.getLogger(__name__)
 
 def error_reporter(title, msg):
     slack_error(title, msg)
+
+    if 'NON-FATAL' not in title:
+        try:
+            send_email(
+                get_config().email_error_to,
+                title,
+                msg
+            )
+        except Exception as e:
+            # Don't block on replying to api caller
+            log.error("Failed to send email report: %s" % str(e))
 
 
 #
