@@ -1,11 +1,11 @@
 import logging
-from scraper.scraper import GenericScraper
+from crawler.crawler import GenericCrawler
 
 
 log = logging.getLogger(__name__)
 
 
-class BlocketScraper(GenericScraper):
+class BlocketCrawler(GenericCrawler):
 
     def __init__(self, consumer):
         self.consumer = consumer

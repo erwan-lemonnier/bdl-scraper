@@ -1,7 +1,7 @@
 import logging
 from unittest import TestCase
-from scraper.scraper import GenericScraper
-from scraper.consumer import ItemConsumer
+from crawler.crawler import GenericCrawler
+from crawler.consumer import ItemConsumer
 
 
 log = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ class Tests(TestCase):
         self.maxDiff = None
 
     def test_html_to_text(self):
-        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
+        c = GenericCrawler(source='test', consumer=ItemConsumer(source='test'))
         tests = [
             # html, text
             ["", ""],
@@ -26,7 +26,7 @@ class Tests(TestCase):
 
 
     def test_find_number(self):
-        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
+        c = GenericCrawler(source='test', consumer=ItemConsumer(source='test'))
         tests = [
             # html, number
             ["<strong>Objektsnr:</strong>\n 351090548 \n", 351090548],
@@ -41,7 +41,7 @@ class Tests(TestCase):
 
 
     def test_date_to_epoch(self):
-        c = GenericScraper(source='test', consumer=ItemConsumer(source='test'))
+        c = GenericCrawler(source='test', consumer=ItemConsumer(source='test'))
         tests = [
             # date, gmt, epoch
             ['23 May 2019 20:57:00', None, 1558637820],

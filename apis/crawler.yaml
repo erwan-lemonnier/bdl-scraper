@@ -1,18 +1,18 @@
-# This is a swagger description of the Bazardelux Scraper API
+# This is a swagger description of the Bazardelux Crawler API
 
 swagger: '2.0'
 info:
-  title: Bazardelux Scraper API
+  title: Bazardelux Crawler API
   version: "0.0.1"
   description: |
 
-    This is the Bazardelux Scraper API.
+    This is the Bazardelux Crawler API.
 
     # OpenAPI Specification
 
     The OpenAPI specification (aka Swagger specification) for the Bazardelux
-    Scraper API is available
-    [here](https://scraper.bazardelux.com/docs/scraper.yaml).
+    Crawler API is available
+    [here](https://scraper.bazardelux.com/docs/crawler.yaml).
 
     # Authentication
 
@@ -61,7 +61,7 @@ info:
     All dates are expressed in the form 'YYYY-MM-DD', as in '2016-10-16'.
 
 
-host: scraper.bazardelux.com
+host: crawler.bazardelux.com
 schemes:
   - https
 basePath: /v1
@@ -69,7 +69,7 @@ produces:
   - application/json
 paths:
 
-  /v1/scraper/scan:
+  /v1/crawler/scan:
     post:
       summary: Scan a website's listing page for objects.
       description:
@@ -78,7 +78,7 @@ paths:
         Found announces are queued up while waiting to be retrieved with
         'v1/results'.
 
-        The scraper will scan a segment of pages within an interval of
+        The crawler will scan a segment of pages within an interval of
         publication time, scanned backward in time, with the first announce
         having the most recent publication date (epoch_youngest), and the last
         announce being the oldest (epoch_oldest).
@@ -111,10 +111,10 @@ paths:
             $ref: "#/definitions/ScanSettings"
 
       tags:
-        - Scraper
+        - Crawler
       produces:
         - application/json
-      x-bind-server: scraper.api.do_scan_source
+      x-bind-server: crawler.api.do_scan_source
       x-bind-client: scan_source
       x-decorate-server: pymacaron.auth.requires_auth
       x-decorate-request: pymacaron.auth.add_auth
@@ -129,7 +129,7 @@ paths:
             $ref: '#/definitions/Error'
 
 
-  /v1/scraper/scrape:
+  /v1/crawler/scrape:
     post:
       summary: Scrape a specific page.
       description:
@@ -152,7 +152,7 @@ paths:
         - Scraper
       produces:
         - application/json
-      x-bind-server: scraper.api.do_scrape_source
+      x-bind-server: crawler.api.do_scrape_source
       x-bind-client: scrape_page
       x-decorate-server: pymacaron.auth.requires_auth
       x-decorate-request: pymacaron.auth.add_auth
@@ -372,7 +372,7 @@ definitions:
         description: (Optional) Link to original announce (outside Facebook, for example)
       native_picture_url:
         type: string
-        description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
+        description: (Optional) URL to the item''s picture on the marketplace it was scraped from.
     required:
       - has_ended
 

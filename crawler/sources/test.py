@@ -1,12 +1,12 @@
 import logging
-from scraper.scraper import GenericScraper
-from scraper.exceptions import InternalServerError
+from crawler.crawler import GenericCrawler
+from crawler.exceptions import InternalServerError
 
 
 log = logging.getLogger(__name__)
 
 
-class TestScraper(GenericScraper):
+class TestCrawler(GenericCrawler):
 
 
     def scrape(self, native_url, scraper_data=None):

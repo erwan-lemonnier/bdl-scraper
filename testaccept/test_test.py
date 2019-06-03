@@ -9,11 +9,11 @@ common = imp.load_source('common', os.path.join(os.path.dirname(__file__), 'comm
 log = logging.getLogger(__name__)
 
 
-class Tests(common.ScraperTests):
+class Tests(common.CrawlerTests):
 
-    def test_v1_scraper_scan__test__synchronous(self):
+    def test_v1_crawler_scan__test__synchronous(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scan',
+            'v1/crawler/scan',
             {
                 'source': 'TEST',
                 'limit_count': 10,
@@ -33,9 +33,9 @@ class Tests(common.ScraperTests):
         )
 
 
-    def test_v1_scraper_scan__test__asynchronous(self):
+    def test_v1_crawler_scan__test__asynchronous(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scan',
+            'v1/crawler/scan',
             {
                 'source': 'TEST',
                 'limit_count': 10,
@@ -54,9 +54,9 @@ class Tests(common.ScraperTests):
         )
 
 
-    def test_v1_scraper_scrape__test__synchronous(self):
+    def test_v1_crawler_scrape__test__synchronous(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scrape',
+            'v1/crawler/scrape',
             {
                 'source': 'TEST',
                 'native_url': 'doesnotmatter',

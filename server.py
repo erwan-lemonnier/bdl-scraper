@@ -2,8 +2,8 @@ import os
 import logging
 from flask import Flask
 from pymacaron import API, letsgo
-from scraper.formats import get_custom_formats
-from scraper.exceptions import error_reporter
+from crawler.formats import get_custom_formats
+from crawler.exceptions import error_reporter
 
 
 log = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ def start(port=None, debug=None):
     )
     api.load_apis(path_apis)
     api.publish_apis(path='docs')
-    api.start(serve=['scraper'])
+    api.start(serve=['crawler'])
 
 
 letsgo(__name__, callback=start)

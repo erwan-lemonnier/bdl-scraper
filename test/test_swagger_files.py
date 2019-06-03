@@ -20,4 +20,4 @@ def check(file):
 
 def test_swagger_files():
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    assert check(os.path.join(current_dir, "../apis/scraper.yaml")), 'bdl.yaml has errors'
+    assert check(os.path.join(current_dir, "../apis/crawler.yaml")), 'crawler.yaml has errors'

@@ -1,8 +1,8 @@
 import logging
 from pymacaron.exceptions import PyMacaronException
 from pymacaron.config import get_config
-from scraper.io.slack import slack_error
-from scraper.io.ses import send_email
+from crawler.io.slack import slack_error
+from crawler.io.ses import send_email
 
 
 log = logging.getLogger(__name__)

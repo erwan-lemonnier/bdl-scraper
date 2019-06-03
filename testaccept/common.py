@@ -7,7 +7,7 @@ from pymacaron.auth import generate_token
 log = logging.getLogger(__name__)
 
 
-class ScraperTests(PyMacaronTestCase):
+class CrawlerTests(PyMacaronTestCase):
 
     def setUp(self):
         super().setUp()

@@ -3,10 +3,10 @@ import logging
 from pymacaron_core.swagger.apipool import ApiPool
 from unittest import TestCase
 from bs4 import BeautifulSoup
-from scraper.formats import get_custom_formats
-from scraper.sources.tradera import TraderaScraper
-from scraper.consumer import ItemConsumer
-from scraper.exceptions import ConsumerLimitReachedError
+from crawler.formats import get_custom_formats
+from crawler.sources.tradera import TraderaCrawler
+from crawler.consumer import ItemConsumer
+from crawler.exceptions import ConsumerLimitReachedError
 
 
 log = logging.getLogger(__name__)
@@ -16,21 +16,21 @@ class Tests(TestCase):
 
     def setUp(self):
         ApiPool.add(
-            'scraper',
-            yaml_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'apis', 'scraper.yaml'),
+            'crawler',
+            yaml_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'apis', 'crawler.yaml'),
             formats=get_custom_formats(),
         )
         self.maxDiff = None
 
 
     def test_init(self):
-        TraderaScraper(source='tradera', consumer=ItemConsumer('tradera'))
+        TraderaCrawler(source='tradera', consumer=ItemConsumer('tradera'))
 
 
     def test_scan_10_items(self):
         # Fetch the last 10 tradera announces and queue them up
         consumer = ItemConsumer('tradera', limit_count=10)
-        c = TraderaScraper(
+        c = TraderaCrawler(
             source='tradera',
             consumer=consumer,
         )
@@ -47,9 +47,9 @@ class Tests(TestCase):
 
     def assertScrape(self, url, data):
         data['native_url'] = url
-        c = TraderaScraper(source='tradera', consumer=ItemConsumer('tradera'))
+        c = TraderaCrawler(source='tradera', consumer=ItemConsumer('tradera'))
         item = c.scrape(url)
-        j = ApiPool.scraper.model_to_json(item)
+        j = ApiPool.crawler.model_to_json(item)
         self.assertEqual(j, data)
 
 
@@ -95,7 +95,7 @@ class Tests(TestCase):
 
         for card, want in tests:
             card = BeautifulSoup(card, 'lxml')
-            c = TraderaScraper(source='tradera', consumer=ItemConsumer('tradera'))
+            c = TraderaCrawler(source='tradera', consumer=ItemConsumer('tradera'))
             i = c.card_to_listing_item(card)
-            j = ApiPool.scraper.model_to_json(i)
+            j = ApiPool.crawler.model_to_json(i)
             self.assertEqual(j, want)

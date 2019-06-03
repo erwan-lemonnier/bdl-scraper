@@ -14,9 +14,9 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from pymacaron.config import get_config
-from scraper.consumer import ItemConsumer
-from scraper.exceptions import UnknownSourceError
-from scraper.io.slack import slack_info
+from crawler.consumer import ItemConsumer
+from crawler.exceptions import UnknownSourceError
+from crawler.io.slack import slack_info
 
 
 log = logging.getLogger(__name__)
@@ -42,18 +42,18 @@ CHROME_OPTIONS.add_argument('disable-infobars')
 CHROME_OPTIONS.add_argument('--disable-extensions')
 
 
-def get_scraper(source, pre_loaded_html=None, **args):
+def get_crawler(source, pre_loaded_html=None, **args):
     """Get a crawler for that source, properly initialized"""
 
-    from scraper.sources.tradera import TraderaScraper
-    from scraper.sources.blocket import BlocketScraper
-    from scraper.sources.test import TestScraper
+    from crawler.sources.tradera import TraderaCrawler
+    from crawler.sources.blocket import BlocketCrawler
+    from crawler.sources.test import TestCrawler
 
     crawler_classes = {
         # source: crawler class
-        'TRADERA': TraderaScraper,
-        'BLOCKET': BlocketScraper,
-        'TEST': TestScraper,
+        'TRADERA': TraderaCrawler,
+        'BLOCKET': BlocketCrawler,
+        'TEST': TestCrawler,
     }
 
     if source not in crawler_classes:
@@ -66,8 +66,8 @@ def get_scraper(source, pre_loaded_html=None, **args):
     )
 
 
-class GenericScraper():
-    """Empty interface that all scrapers must implement"""
+class GenericCrawler():
+    """Empty interface that all crawlers must implement"""
 
     def __init__(self, source=None, consumer=None, pre_loaded_html=None):
         assert source, "source must be set"

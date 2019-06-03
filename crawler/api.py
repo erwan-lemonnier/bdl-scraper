@@ -2,16 +2,16 @@ import logging
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_async import asynctask
-from scraper.scraper import get_scraper
-from scraper.exceptions import ConsumerLimitReachedError
-from scraper.exceptions import ConsumerEpochReachedError
+from crawler.crawler import get_crawler
+from crawler.exceptions import ConsumerLimitReachedError
+from crawler.exceptions import ConsumerEpochReachedError
 
 
 log = logging.getLogger(__name__)
 
 
 def empty_response(source, **whatever):
-    return ApiPool.scraper.model.ScrapedObjects(
+    return ApiPool.crawler.model.ScrapedObjects(
         index='BDL',
         source=source.upper(),
         real=True,
@@ -40,8 +40,8 @@ def do_scan_source(data):
 
     log.debug("Scan settings are: %s" % settings)
     if data.synchronous:
-        scraper = scan(source, allow_flush=False, **settings)
-        return scraper.consumer.get_scraped_objects()
+        crawler = scan(source, allow_flush=False, **settings)
+        return crawler.consumer.get_scraped_objects()
 
     # Execute asynchronously
     async_scan(source, **settings)
@@ -54,7 +54,7 @@ def async_scan(*args, **kwargs):
 
 
 def scan(source, **kwargs):
-    c = get_scraper(source, **kwargs)
+    c = get_crawler(source, **kwargs)
 
     # Scan and catch limit reached exceptions
     try:
@@ -86,8 +86,8 @@ def do_scrape_source(data):
     }
 
     if data.synchronous:
-        scraper = scrape(source, allow_flush=False, **settings)
-        return scraper.consumer.get_scraped_objects()
+        crawler = scrape(source, allow_flush=False, **settings)
+        return crawler.consumer.get_scraped_objects()
 
     async_scrape(source, **settings)
     return empty_response(source, **settings)
@@ -99,7 +99,7 @@ def async_scrape(*args, **kwargs):
 
 
 def scrape(source, pre_loaded_html=None, native_url=None, scraper_data=None, allow_flush=True):
-    c = get_scraper(source, pre_loaded_html=pre_loaded_html, allow_flush=allow_flush)
+    c = get_crawler(source, pre_loaded_html=pre_loaded_html, allow_flush=allow_flush)
     c.scrape(
         native_url,
         scraper_data,

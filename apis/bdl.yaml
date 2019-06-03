@@ -586,7 +586,7 @@ definitions:
         description: (Optional) Link to original announce (outside Facebook, for example)
       native_picture_url:
         type: string
-        description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
+        description: (Optional) URL to the item''s picture on the marketplace it was scraped from.
     required:
       - has_ended
 
@@ -664,7 +664,7 @@ definitions:
         description: (Optional) Link to original announce (outside Facebook, for example)
       native_picture_url:
         type: string
-        description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
+        description: (Optional) URL to the item''s picture on the marketplace it was scraped from.
     required:
       - has_ended
 

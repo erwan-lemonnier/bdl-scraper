@@ -2,10 +2,10 @@ import logging
 from pymacaron.utils import to_epoch, timenow
 from pymacaron.exceptions import is_error
 from pymacaron_core.swagger.apipool import ApiPool
-from scraper.exceptions import ConsumerLimitReachedError
-from scraper.exceptions import ConsumerEpochReachedError
-from scraper.exceptions import ApiCallError
-from scraper.io.slack import slack_info
+from crawler.exceptions import ConsumerLimitReachedError
+from crawler.exceptions import ConsumerEpochReachedError
+from crawler.exceptions import ApiCallError
+from crawler.io.slack import slack_info
 
 log = logging.getLogger(__name__)
 
@@ -35,8 +35,8 @@ class ItemConsumer():
 
 
     def process(self, object):
-        """Swallow a scraped object and return True if the scraper should proceed
-        scraping and sending the next object, or False if the scraper should
+        """Swallow a scraped object and return True if the crawler should proceed
+        scraping and sending the next object, or False if the crawler should
         stop.
 
         """
@@ -83,7 +83,7 @@ class ItemConsumer():
             objects=[
                 ApiPool.bdl.json_to_model(
                     'ScrapedObject',
-                    ApiPool.scraper.model_to_json(o),
+                    ApiPool.crawler.model_to_json(o),
                 ) for o in self.objects
             ],
         )
@@ -111,7 +111,7 @@ class ItemConsumer():
     def get_scraped_objects(self):
         """Return a ScrapedObjects containing all scraped objects"""
 
-        return ApiPool.scraper.model.ScrapedObjects(
+        return ApiPool.crawler.model.ScrapedObjects(
             index='BDL',
             source=self.source.upper(),
             real=True,

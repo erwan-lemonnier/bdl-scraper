@@ -6,11 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.crash import report_error
-from scraper.scraper import GenericScraper
-from scraper.exceptions import ParserError
-from scraper.exceptions import CannotGetUrlError
-from scraper.exceptions import SkipThisItem
-from scraper.exceptions import ConsumerEpochReachedError
+from crawler.crawler import GenericCrawler
+from crawler.exceptions import ParserError
+from crawler.exceptions import CannotGetUrlError
+from crawler.exceptions import SkipThisItem
+from crawler.exceptions import ConsumerEpochReachedError
 
 
 log = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ TRADERA_CATEGORIES = [
     'konst-23',
 ]
 
-class TraderaScraper(GenericScraper):
+class TraderaCrawler(GenericCrawler):
 
     def __init__(self, **args):
         log.debug("TraderaCrawler got init args: %s" % args)
@@ -71,10 +71,10 @@ class TraderaScraper(GenericScraper):
             from dateutil import parser
             date_ended = parser.parse(date_ended_str, ignoretz=True)
 
-            item = ApiPool.scraper.model.ScrapedObject(
+            item = ApiPool.crawler.model.ScrapedObject(
                 is_complete=False,
                 native_url=native_url,
-                bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
+                bdlitem=ApiPool.crawler.model.ScrapedBDLItem(
                     has_ended=True,
                     date_ended=date_ended,
                 )
@@ -137,10 +137,10 @@ class TraderaScraper(GenericScraper):
         native_seller_name = tag.text
         assert native_seller_name, "Failed to find seller name in %s" % native_url
 
-        item = ApiPool.scraper.model.ScrapedObject(
+        item = ApiPool.crawler.model.ScrapedObject(
             is_complete=True,
             native_url=native_url,
-            bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
+            bdlitem=ApiPool.crawler.model.ScrapedBDLItem(
                 title=title,
                 price=price,
                 price_is_fixed=price_is_fixed,
@@ -157,7 +157,7 @@ class TraderaScraper(GenericScraper):
             )
         )
 
-        log.debug("Scraped Tradera announce: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))
+        log.debug("Scraped Tradera announce: %s" % json.dumps(ApiPool.crawler.model_to_json(item), indent=4))
 
         return self.consumer.process(item)
 
@@ -257,10 +257,10 @@ class TraderaScraper(GenericScraper):
         title = tag['title']
 
         # Let's prepare an ItemForSale representing this object
-        item = ApiPool.scraper.model.ScrapedObject(
+        item = ApiPool.crawler.model.ScrapedObject(
             is_complete=False,
             native_url=native_url,
-            bdlitem=ApiPool.scraper.model.ScrapedBDLItem(
+            bdlitem=ApiPool.crawler.model.ScrapedBDLItem(
                 has_ended=False,
                 title=title,
                 price=int(price),
@@ -271,7 +271,7 @@ class TraderaScraper(GenericScraper):
             )
         )
 
-        log.debug("Generated tradera listing item: %s" % json.dumps(ApiPool.scraper.model_to_json(item), indent=4))
+        log.debug("Generated tradera listing item: %s" % json.dumps(ApiPool.crawler.model_to_json(item), indent=4))
 
         return item
 

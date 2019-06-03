@@ -9,19 +9,19 @@ common = imp.load_source('common', os.path.join(os.path.dirname(__file__), 'comm
 log = logging.getLogger(__name__)
 
 
-class Tests(common.ScraperTests):
+class Tests(common.CrawlerTests):
 
-    def test_v1_scraper_scan__tradera__auth_required(self):
+    def test_v1_crawler_scan__tradera__auth_required(self):
         self.assertPostReturnError(
-            'v1/scraper/scan',
+            'v1/crawler/scan',
             {'source': 'TEST'},
             401,
             'AUTHORIZATION_HEADER_MISSING',
         )
 
-    def test_v1_scraper_scan__tradera__live__10_items(self):
+    def test_v1_crawler_scan__tradera__live__10_items(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scan',
+            'v1/crawler/scan',
             {
                 'source': 'TRADERA',
                 'limit_count': 10,
@@ -51,9 +51,9 @@ class Tests(common.ScraperTests):
             self.assertIsIncompleteTraderaItem(j)
 
 
-    def test_v1_scraper_scrape__tradera__html__no_bid__shop(self):
+    def test_v1_crawler_scrape__tradera__html__no_bid__shop(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scrape',
+            'v1/crawler/scrape',
             {
                 'source': 'TRADERA',
                 'native_url': 'doesnotmatter',
@@ -94,9 +94,9 @@ class Tests(common.ScraperTests):
         )
 
 
-    def test_v1_scraper_scrape__tradera__html__many_bids(self):
+    def test_v1_crawler_scrape__tradera__html__many_bids(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scrape',
+            'v1/crawler/scrape',
             {
                 'source': 'TRADERA',
                 'native_url': 'doesnotmatter',
@@ -137,9 +137,9 @@ class Tests(common.ScraperTests):
         )
 
 
-    def test_v1_scraper_scrape__tradera__ended__no_bid__shop(self):
+    def test_v1_crawler_scrape__tradera__ended__no_bid__shop(self):
         j = self.assertPostReturnJson(
-            'v1/scraper/scrape',
+            'v1/crawler/scrape',
             {
                 'source': 'TRADERA',
                 'native_url': 'doesnotmatter',
