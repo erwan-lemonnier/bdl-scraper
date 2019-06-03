@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 from pymacaron_core.swagger.apipool import ApiPool
 from pymacaron.utils import to_epoch, timenow
 from pymacaron_async import asynctask
@@ -117,8 +118,15 @@ def do_search_source(data):
     source = data.source.upper()
     if data.synchronous in (False, None):
         raise InternalServerError("Asynchronous mode is not supported for search")
+    if not data.limit_count:
+        data.limit_count = 5
 
-    c = get_crawler(source, allow_flush=False)
-    c.search(data.query)
+    query = urllib.parse.quote(data.query)
+
+    c = get_crawler(source, allow_flush=False, limit_count=data.limit_count)
+    try:
+        c.search(query, scraper_data=data.scraper_data)
+    except ConsumerLimitReachedError:
+        log.info("Consumer reached item limit")
 
     return c.consumer.get_scraped_objects()

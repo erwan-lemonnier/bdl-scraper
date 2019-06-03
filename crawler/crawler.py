@@ -94,6 +94,10 @@ class GenericCrawler():
         raise Exception("Not implemented")
 
 
+    def search(self, query, scraper_data=None):
+        raise Exception("Not implemented")
+
+
     def get_webdriver(self):
         """Return webdriver if it is available on the host, else None"""
 

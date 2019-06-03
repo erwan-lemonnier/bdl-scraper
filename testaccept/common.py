@@ -29,7 +29,7 @@ class CrawlerTests(PyMacaronTestCase):
         self.assertTrue(j['native_url'].startswith('https://www.tradera.com/item/'))
         j = j['bdlitem']
         self.assertTrue(j['native_picture_url'].startswith('https://img.tradera.net/images/'))
-        self.assertTrue(j['epoch_published'] > 1558000000)
+        self.assertTrue(j['epoch_published'] > 1400000000)
         self.assertTrue(type(j['native_doc_id']) is str)
         self.assertTrue(type(j['price']) is int)
         self.assertEqual(j['currency'], 'SEK')

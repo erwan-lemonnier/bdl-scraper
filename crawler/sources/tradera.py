@@ -41,6 +41,22 @@ class TraderaCrawler(GenericCrawler):
         self.count_page = 0
 
 
+    def search(self, query, scraper_data=None):
+        """Search tradera and scrape the first matching announces"""
+
+        url = BASE_URL + "/search?q=%s" % query
+
+        self.get_url(url, wait_condition=EC.presence_of_element_located((By.CLASS_NAME, "item-card-figure")))
+
+        # scrape the current listing page
+        for item in self.yield_listing_page_items():
+            self.scrape(item.native_url)
+
+        # The consumer will probably raise a limit exception before getting here, but if not,
+        # let's return after the 1st page is scraped
+        return
+
+
     def scrape(self, native_url, scraper_data=None):
         """Parse an announce on Tradera"""
 

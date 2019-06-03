@@ -19,6 +19,7 @@ class Tests(common.CrawlerTests):
             'AUTHORIZATION_HEADER_MISSING',
         )
 
+
     def test__tradera__v1_crawler_scan__live__10_items(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scan',
@@ -167,3 +168,33 @@ class Tests(common.CrawlerTests):
                 ]
             }
         )
+
+
+    def test__tradera__v1_crawler_search__live__3_items(self):
+        j = self.assertPostReturnJson(
+            'v1/crawler/search',
+            {
+                'source': 'TRADERA',
+                'query': 'el cykel',
+                'limit_count': 3,
+                'synchronous': True,
+            },
+            auth='Bearer %s' % self.token,
+        )
+
+        objects = j['objects']
+        self.assertEqual(len(objects), 3)
+
+        j['objects'] = []
+        self.assertEqual(
+            j,
+            {
+                'source': 'TRADERA',
+                'real': True,
+                'index': 'BDL',
+                'objects': [],
+            }
+        )
+
+        for j in objects:
+            self.assertIsCompleteTraderaItem(j)

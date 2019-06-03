@@ -283,6 +283,9 @@ definitions:
       query:
         type: string
         description: A text query to pass directly to the source''s search input.
+      limit_count:
+        description: (Optional) Fetch only the first limit_count matching items (Default 5).
+        type: number
       scraper_data:
         type: string
         description: (Optional) Extra data provided by the scraper, as a json string.
