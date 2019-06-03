@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class Tests(common.CrawlerTests):
 
-    def test_v1_crawler_scan__tradera__auth_required(self):
+    def test__tradera__v1_crawler_scan__auth_required(self):
         self.assertPostReturnError(
             'v1/crawler/scan',
             {'source': 'TEST'},
@@ -19,7 +19,7 @@ class Tests(common.CrawlerTests):
             'AUTHORIZATION_HEADER_MISSING',
         )
 
-    def test_v1_crawler_scan__tradera__live__10_items(self):
+    def test__tradera__v1_crawler_scan__live__10_items(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scan',
             {
@@ -51,7 +51,7 @@ class Tests(common.CrawlerTests):
             self.assertIsIncompleteTraderaItem(j)
 
 
-    def test_v1_crawler_scrape__tradera__html__no_bid__shop(self):
+    def test__tradera__v1_crawler_scrape__html__no_bid__shop(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scrape',
             {
@@ -94,7 +94,7 @@ class Tests(common.CrawlerTests):
         )
 
 
-    def test_v1_crawler_scrape__tradera__html__many_bids(self):
+    def test__tradera__v1_crawler_scrape__html__many_bids(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scrape',
             {
@@ -137,7 +137,7 @@ class Tests(common.CrawlerTests):
         )
 
 
-    def test_v1_crawler_scrape__tradera__ended__no_bid__shop(self):
+    def test__tradera__v1_crawler_scrape__ended__no_bid__shop(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scrape',
             {

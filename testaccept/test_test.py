@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class Tests(common.CrawlerTests):
 
-    def test_v1_crawler_scan__test__synchronous(self):
+    def test__test__v1_crawler_scan__synchronous(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scan',
             {
@@ -33,7 +33,7 @@ class Tests(common.CrawlerTests):
         )
 
 
-    def test_v1_crawler_scan__test__asynchronous(self):
+    def test__test__v1_crawler_scan__asynchronous(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scan',
             {
@@ -54,12 +54,34 @@ class Tests(common.CrawlerTests):
         )
 
 
-    def test_v1_crawler_scrape__test__synchronous(self):
+    def test__test__v1_crawler_scrape__synchronous(self):
         j = self.assertPostReturnJson(
             'v1/crawler/scrape',
             {
                 'source': 'TEST',
                 'native_url': 'doesnotmatter',
+                'synchronous': True,
+            },
+            auth='Bearer %s' % self.token,
+        )
+
+        self.assertEqual(
+            j,
+            {
+                'source': 'TEST',
+                'real': True,
+                'index': 'BDL',
+                'objects': [],
+            }
+        )
+
+
+    def test__test__v1_crawler_search__synchronous(self):
+        j = self.assertPostReturnJson(
+            'v1/crawler/search',
+            {
+                'source': 'TEST',
+                'query': 'whatever',
                 'synchronous': True,
             },
             auth='Bearer %s' % self.token,

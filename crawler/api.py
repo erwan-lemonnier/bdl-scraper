@@ -5,6 +5,7 @@ from pymacaron_async import asynctask
 from crawler.crawler import get_crawler
 from crawler.exceptions import ConsumerLimitReachedError
 from crawler.exceptions import ConsumerEpochReachedError
+from crawler.exceptions import InternalServerError
 
 
 log = logging.getLogger(__name__)
@@ -106,3 +107,18 @@ def scrape(source, pre_loaded_html=None, native_url=None, scraper_data=None, all
     )
     c.consumer.flush()
     return c
+
+
+#
+# SEARCH
+#
+
+def do_search_source(data):
+    source = data.source.upper()
+    if data.synchronous in (False, None):
+        raise InternalServerError("Asynchronous mode is not supported for search")
+
+    c = get_crawler(source, allow_flush=False)
+    c.search(data.query)
+
+    return c.consumer.get_scraped_objects()

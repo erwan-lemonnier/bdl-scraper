@@ -32,3 +32,11 @@ class TestCrawler(GenericCrawler):
         log.info("TEST: mock scanning source TEST")
 
         return None
+
+
+    def search(self, query):
+        """Simulate searching source"""
+
+        log.info("TEST: mock searching source TEST")
+
+        return None

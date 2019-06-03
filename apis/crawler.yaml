@@ -167,6 +167,45 @@ paths:
             $ref: '#/definitions/Error'
 
 
+  /v1/crawler/search:
+    post:
+      summary: Search a website for matching objects.
+      description:
+
+        Use a source website's built-in search to generate a listing of
+        matching objects and scrape them. Limit scraping to a small number
+        of objects, 5 by default.
+
+        The search is synchronous, and will return only when all found items
+        are scraped.
+
+      parameters:
+        - in: body
+          name: body
+          description: How to search this source.
+          required: true
+          schema:
+            $ref: "#/definitions/SearchSettings"
+
+      tags:
+        - Crawler
+      produces:
+        - application/json
+      x-bind-server: crawler.api.do_search_source
+      x-bind-client: search_source
+      x-decorate-server: pymacaron.auth.requires_auth
+      x-decorate-request: pymacaron.auth.add_auth
+      responses:
+        '200':
+          description: Matching items, or none
+          schema:
+            $ref: '#/definitions/ScrapedObjects'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
+
+
 definitions:
 
   ScanSettings:
@@ -228,6 +267,32 @@ definitions:
     required:
       - native_url
       - source
+
+
+  SearchSettings:
+    type: object
+    description: A search query to apply on a website.
+    properties:
+      source:
+        type: string
+        description: The searched website.
+        enum:
+          - BLOCKET
+          - TRADERA
+          - TEST
+      query:
+        type: string
+        description: A text query to pass directly to the source''s search input.
+      scraper_data:
+        type: string
+        description: (Optional) Extra data provided by the scraper, as a json string.
+      synchronous:
+        description: If false (default), scrape asynchronously in the background and return no objects. If true, scrape synchronously and return the scraped data.
+        type: boolean
+    required:
+      - source
+      - query
+      - synchronous
 
 
   ScrapedObjects:
