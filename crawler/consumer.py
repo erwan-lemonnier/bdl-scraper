@@ -76,12 +76,12 @@ class ItemConsumer():
 
         log.debug("Flush: sending %s scanned objects to BDL api" % len(self.objects))
 
-        data = ApiPool.bdl.model.ScrapedObjects(
+        data = ApiPool.api.model.ScrapedObjects(
             index='BDL',
             source=self.source.upper(),
             real=True,
             objects=[
-                ApiPool.bdl.json_to_model(
+                ApiPool.api.json_to_model(
                     'ScrapedObject',
                     ApiPool.crawler.model_to_json(o),
                 ) for o in self.objects
@@ -89,7 +89,7 @@ class ItemConsumer():
         )
 
         # And send the scraped objects to the BDL api
-        r = ApiPool.bdl.client.process_items(data)
+        r = ApiPool.api.client.process_items(data)
         if is_error(r):
             raise ApiCallError("Flush error: %s" % r.error_description)
 

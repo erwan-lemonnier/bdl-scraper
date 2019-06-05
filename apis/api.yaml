@@ -67,64 +67,6 @@ produces:
   - application/json
 paths:
 
-  /v1/search:
-    get:
-      summary: Search the database of items for sale.
-      description:
-
-        Search the database of items currently for sale and return a list of
-        items to display in the frontend.
-
-      parameters:
-        - in: query
-          name: query
-          description: Search for these words.
-          required: false
-          type: string
-        - in: query
-          name: page
-          description: Page number (0 is first page)
-          required: false
-          type: number
-        - in: query
-          name: page_size
-          description: Number of items per page (30 by default)
-          required: false
-          type: number
-        - in: query
-          name: real
-          description: Query the live index if true (default) else the test one.
-          required: false
-          type: string
-        - in: query
-          name: country
-          description: Restrict search to this country.
-          required: false
-          type: string
-        - in: query
-          name: index
-          description: Which index to query (default to BDL).
-          required: false
-          type: string
-
-      tags:
-        - Search
-      produces:
-        - application/json
-      x-bind-server: bdl.api.search.do_search_items
-      x-bind-client: search_items_for_sale
-      x-decorate-server: pymacaron.auth.requires_auth
-      x-decorate-request: pymacaron.auth.add_auth
-      responses:
-        '200':
-          description: Matching items
-          schema:
-            $ref: '#/definitions/ItemsForSale'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/Error'
-
 
   /v1/items/process:
     post:
@@ -554,7 +496,7 @@ definitions:
         description: (Optional) Date at which this item was removed from sale.
       is_sold:
         type: boolean
-        description: True is we know that this item has been sold.
+        description: (Optional) True is we know that this item has been sold.
       price_sold:
         type: number
         format: amount
@@ -586,7 +528,7 @@ definitions:
         description: (Optional) Link to original announce (outside Facebook, for example)
       native_picture_url:
         type: string
-        description: (Optional) URL to the item''s picture on the marketplace it was scraped from.
+        description: (Optional) URL to the item''s picture on the marketplace it was scrapped from.
     required:
       - has_ended
 
@@ -669,7 +611,6 @@ definitions:
       - has_ended
 
 
-
   ArchiveReason:
     type: object
     description: Why is this item being archived?
@@ -678,12 +619,24 @@ definitions:
         type: string
         description: Reason why the item is being archived
         enum:
+          - ENDED
           - SOLD
           - REMOVED
+      date_ended:
+        type: string
+        format: date-time
+        description: (Optional) Date at which this item was removed from sale.
+      is_sold:
+        type: boolean
+        description: (Optional) True is we know that this item has been sold.
       price_sold:
         type: number
         format: amount
         description: (Optional) Price paid for this item, if it is sold and a price was available.
+      date_sold:
+        type: string
+        format: date-time
+        description: (Optional) Date at which this item was sold.
     required:
       - reason
 
