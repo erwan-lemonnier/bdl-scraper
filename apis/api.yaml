@@ -11,7 +11,7 @@ info:
     # OpenAPI Specification
 
     The OpenAPI specification (aka Swagger specification) for the Bazardelux
-    API is available [here](https://api.bazardelux.com/docs/bdl.yaml).
+    API is available [here](https://api.bazardelux.com/docs/api.yaml).
 
     # Authentication
 
@@ -66,6 +66,72 @@ basePath: /v1
 produces:
   - application/json
 paths:
+
+
+  /v1/search:
+    get:
+      summary: Search the database of items.
+      description:
+
+        Search the database of items and return generic scraped items.
+
+        If the targeted index is 'BDL', the items returned will have a
+        'bdlitem' attribute filled with the data specific to the corresponding
+        sale announce.
+
+        The location parameter may be a country code (example 'SE'), or the
+        string 'AROUND_<country_code>' (example 'AROUND_SE') hence adding
+        surrounding countries to the search, or 'ALL'.
+
+      parameters:
+        - in: query
+          name: query
+          description: Search for these words.
+          required: false
+          type: string
+        - in: query
+          name: page
+          description: Page number (0 is first page)
+          required: false
+          type: number
+        - in: query
+          name: page_size
+          description: Number of items per page (30 by default)
+          required: false
+          type: number
+        - in: query
+          name: real
+          description: Query the live index if true (default) else the test one.
+          required: false
+          type: string
+        - in: query
+          name: location
+          description: Restrict search to this country or group of countries.
+          required: false
+          type: string
+        - in: query
+          name: index
+          description: Which index to query (default to BDL).
+          required: false
+          type: string
+
+      tags:
+        - Search
+      produces:
+        - application/json
+      x-bind-server: bdl.api.search.do_search_items
+      x-bind-client: search_items_for_sale
+      x-decorate-server: pymacaron.auth.requires_auth
+      x-decorate-request: pymacaron.auth.add_auth
+      responses:
+        '200':
+          description: Matching items
+          schema:
+            $ref: '#/definitions/SearchedItems'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
 
 
   /v1/items/process:
@@ -295,30 +361,28 @@ paths:
 definitions:
 
 
-  ItemsForSale:
+  SearchedItems:
     type: object
     description: A list of items for sale.
     properties:
       query:
         type: string
-        description: The keywords searched for
+        description: The keywords searched for.
+      location:
+        type: string
+        description: Which country/location the search focused on.
       count_found:
         type: number
-        description: Number of matches
+        description: Number of matches.
       url_this:
         type: string
-        description: The url that returned this result
+        description: The url that returned this result.
       url_next:
         type: string
-        description: Url to get the next result set
-      htmls:
-        type: array
-        description: HTML blocks representing items to be inserted in search page
-        items:
-          type: string
+        description: Url to get the next result set, or undefined if all hits have been retrieved.
       items:
         type: array
-        description: Items for sale
+        description: Matching items.
         items:
           $ref: "#/definitions/Item"
 
@@ -505,6 +569,9 @@ definitions:
         type: string
         format: date-time
         description: (Optional) Date at which this item was sold.
+      epoch_published:
+        type: integer
+        description: (Optional) When this announce was published.
       native_doc_id:
         type: string
         description: (Optional) The document ID of the original announce in its marketplace (Facebook doc ID, blocket_id, tradera_id)
@@ -581,7 +648,7 @@ definitions:
         format: date-time
         description: (Optional) Date at which this item was sold.
       epoch_published:
-        type: number
+        type: integer
         description: (Optional) When this announce was published.
       native_doc_id:
         type: string
