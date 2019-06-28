@@ -83,7 +83,7 @@ def main(source, scan, scrape, host, port, async, limit_count, back_secs):
 
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer %s' % generate_token('scrape_source.py', data={}, expire_in=6000)
+        'Authorization': 'Bearer %s' % generate_token('scrape_source.py', data={}, expire_in=86400)
     }
 
     log.info("=> Calling POST %s: %s" % (endpoint_url, json.dumps(data, indent=4)))
